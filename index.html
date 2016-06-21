@@ -1,0 +1,278 @@
+<style>
+/*#svgClass {
+  width: 240px;
+  height: 240px;
+  background-image: url("hex.jpg");
+  background-size: contain;
+}
+#hexClass:hover {
+	cursor: pointer;
+	fill: green;
+	fill-opacity: 0;
+}
+.hover {
+  cursor: pointer;
+}
+#charizard:hover {
+  fill: red;
+  opacity: 0.5;
+}*/
+#charizard {
+  border: 1px solid grey;
+  cursor: pointer;
+}
+#charizard:hover {
+  opacity: 0.5;
+}
+.mask {
+  fill: black;
+}
+.mask:hover {
+  cursor: pointer;
+  fill-opacity: 0;
+}
+</style>
+
+<!-- <svg id="svgClass" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+  <polygon id="hexClass" points="64,23 177,23 235,121 177,219 64,219 7,121"></polygon>
+</svg> -->
+
+<!-- <img src="test.png"> -->
+<!-- <img id="hexImage" src="hex.png"> -->
+<img id="charizard" src="charizard.png">
+<!-- <img id="plusImage" src="plus.png"> -->
+<!-- <img id="testImage" src="y.png"> -->
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script>
+	// $("#hexClass").click(function() {
+	//   console.log("hex click");
+	// });
+
+ //  $(function() {
+    // $("img").mousemove(function(e) {
+        
+    //   if(!this.canvas) {
+    //       this.canvas = $("<canvas />")[0];
+    //       this.canvas.width = this.width;
+    //       this.canvas.height = this.height;
+    //       this.canvas.getContext("2d").drawImage(this, 0, 0, this.width, this.height);
+    //   }
+      
+    //   var pixelData = this.canvas.getContext("2d").getImageData(event.offsetX, event.offsetY, 1, 1).data;
+    //   var testData = this.canvas.getContext("2d");
+      
+    //   console.log("RGBA: " + pixelData[0] + ", " + pixelData[1] + ", " + pixelData[2] + ", " + pixelData[3]);
+    // });
+    // renderMap("plusImage");
+    // renderMap("hexImage");
+    // renderMap("charizard");
+
+   
+  // });
+
+//   function renderMap(imageId) {
+//     var image = $("#"+imageId)[0];
+//     var canvas = $("<canvas />")[0];
+//     canvas.width = image.width;
+//     canvas.height = image.height;
+//     canvas.getContext("2d").drawImage(image, 0, 0, image.width, image.height);
+    
+//     // console.log("data: ");
+//     var svgString = '<svg style="width: '+image.width+'px;height: '+image.height+'px;background-size: contain;background-image: url('+$("#"+imageId).attr("src")+');" viewBox="0 0 '+image.width+' '+image.height+'" xmlns="http://www.w3.org/2000/svg">';
+// //   <polygon id="hexClass" points="64,23 177,23 235,121 177,219 64,219 7,121"></polygon>
+// // 
+//     // string = "";
+//     for (var x = 0; x < image.width; x++) {
+//       for (var y = 0; y < image.height; y++) {
+//         var alpha = canvas.getContext("2d").getImageData(x, y, 1, 1).data[3];
+//         if (alpha > 0) {
+//           // string += " "+x+","+y;
+//           svgString += '<rect class="hover" x="'+x+'" y="'+y+'" width="1" height="1" style="fill:blue;fill-opacity:0;"/>';//
+//         }
+//       }
+//     }
+//     svgString += '</svg>';
+//     $("body").append(svgString);
+//   }
+var imageArray = [
+  [0,0,0,0,0],
+  [0,1,0,1,0],
+  [0,1,1,1,0],
+  [0,0,1,0,0],
+  [0,0,0,0,0]
+];
+
+//x, y map
+// // 0:-1,-1  1:-1,0  2:-1,1
+// // 7:0,-1   X:0,0   3:0,1
+// // 6:1,-1   5:1,0   4:1,1
+// var directions = [
+//   {x:-1,y:-1},
+//   {x:-1,y:0},
+//   {x:-1,y:1},
+//   {x:0,y:1},
+//   {x:1,y:1},
+//   {x:1,y:0},
+//   {x:1,y:-1},
+//   {x:0,y:-1}
+// ];
+
+// 0:-1,-1  1:0,-1  2:1,-1
+// 7:-1,0   X:0,0   3:1,0
+// 6:-1,1   5:0,1   4:1,1
+var directions = [
+  {x:-1,y:-1},
+  {x:0,y:-1},
+  {x:1,y:-1},
+  {x:1,y:0},
+  {x:1,y:1},
+  {x:0,y:1},
+  {x:-1,y:1},
+  {x:-1,y:0}
+];
+
+var pixelTolerance = 1;
+
+
+
+// var currentNode = {x:1, y:1};
+// for (var i = 0; i < 8; i++) {
+//   var value = getSiblingSolid(currentNode, i);
+//   console.log(value);
+// }
+
+// console.log(getSiblingSolid(currentNode, 0));
+// console.log(getSiblingSolid(currentNode, 2));
+// console.log(getSiblingSolid(currentNode, 4));
+// console.log(getSiblingSolid(currentNode, 6));
+
+
+var alphaTolerance = 10;
+var pathDirection = {
+  "up": { straight:1, corner:"topLeft", turnDir:7, turnString:"left", otherturn: "right"},
+  "right": { straight:3, corner:"topRight", turnDir:1, turnString:"up", otherturn: "down"},
+  "down": { straight:5, corner:"bottomRight", turnDir:3, turnString:"right", otherturn: "left"},
+  "left": { straight:7, corner:"bottomLeft", turnDir:5, turnString:"down", otherturn: "up"}
+};
+var image;
+var imageIdVar;
+var canvas;
+var startingPath;
+var paths = "";
+
+function createCanvas(image) {
+  canvas = document.createElement('canvas');
+  canvas.width = image.width;
+  canvas.height = image.height;
+  canvas.getContext("2d").drawImage(image, 0, 0, image.width, image.height);
+}
+function isSolidNode(node) {
+  var alpha = canvas.getContext("2d").getImageData(node.x, node.y, 1, 1).data[3];
+  return alpha > alphaTolerance;
+}
+
+function getSiblingNode(node, directionsId) {
+  var dirX = directions[directionsId].x*pixelTolerance;
+  var dirY = directions[directionsId].y*pixelTolerance;
+  return {x:node.x+dirX, y:node.y+dirY};
+}
+// function getSiblingSolid(node, directionsId) {
+//   return isSolidNode(getSiblingNode(node, directionsId));
+// }
+
+function getCornerString(node, cornerString) {
+  var distance = 1*pixelTolerance;
+  switch (cornerString) {
+    case "topLeft":
+      return " "+node.x+","+node.y;
+    case "bottomLeft":
+      return " "+node.x+","+(node.y+distance);
+    case "topRight":
+      return " "+(node.x+distance)+","+node.y;
+    case "bottomRight":
+      return " "+(node.x+distance)+","+(node.y+distance);
+  }
+}
+
+var count = 0;
+function findNextNode(node, pathString) {
+  count++;
+  var dir = pathDirection[pathString];
+  var turnNode = getSiblingNode(node, dir.turnDir);
+  if (isSolidNode(turnNode)) {
+    // findNextNode(turnNode, dir.turnString);
+    return {status:"mapping", node:turnNode, dir:dir.turnString};
+  } else {
+    var nextPath = getCornerString(node, dir.corner);
+    if (nextPath !== startingPath) {
+      paths += nextPath;
+      var straightNode = getSiblingNode(node, dir.turnDir);
+      if (isSolidNode(straightNode)) {
+        // findNextNode(straightNode, pathString);
+        return {status:"mapping", node:straightNode, dir:pathString}
+      } else {
+        // findNextNode(node, dir.otherturn);
+        return {status:"mapping", node:node, dir:dir.otherturn}
+      }
+    } else {
+      // renderPolygon();
+      return {status:"complete"}
+    }
+  }
+}
+
+function createPolygon(imageId) {
+  // console.log("0");
+
+  imageIdVar = imageId;
+  image = document.getElementById(imageId);
+  createCanvas(image);
+
+
+  var halfHeight = Math.floor(image.height/2);
+  var startingNode = {x:0, y:halfHeight};
+  
+
+  while (startingNode.x < image.width) {
+    if (isSolidNode(startingNode)) {
+      startingPath = paths = getCornerString(startingNode, "bottomLeft");
+      // paths += getCornerString(currentNode, "topLeft");
+      break;
+    }
+    startingNode.x++;
+  }
+
+  var results = {status:"mapping", node:startingNode, dir:"up"};
+  while (results.status !== "complete") {
+    results = findNextNode(results.node, results.dir);
+  }
+  renderPolygon();
+  console.log(count);
+
+}
+function renderPolygon() {
+  // console.log("paths: "+paths);
+  var svgString = '<svg style="width: '+image.width+'px;height: '+image.height+'px;background-size: contain;background-repeat: no-repeat;background-position: center; background-image: url('+$("#"+imageIdVar).attr("src")+');" viewBox="0 0 '+image.width+' '+image.height+'" xmlns="http://www.w3.org/2000/svg">';
+  svgString +=      '<polygon class="mask" points="'+paths+'"></polygon>';
+  svgString +=    '</svg>';
+  $("body").append(svgString);
+}
+
+
+
+$(function() {
+  createPolygon("charizard");
+});
+</script>
