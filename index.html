@@ -106,13 +106,13 @@
 //     svgString += '</svg>';
 //     $("body").append(svgString);
 //   }
-var imageArray = [
-  [0,0,0,0,0],
-  [0,1,0,1,0],
-  [0,1,1,1,0],
-  [0,0,1,0,0],
-  [0,0,0,0,0]
-];
+// var imageArray = [
+//   [0,0,0,0,0],
+//   [0,1,0,1,0],
+//   [0,1,1,1,0],
+//   [0,0,1,0,0],
+//   [0,0,0,0,0]
+// ];
 
 //x, y map
 // // 0:-1,-1  1:-1,0  2:-1,1
@@ -161,10 +161,10 @@ var pixelTolerance = 1;
 
 var alphaTolerance = 10;
 var pathDirection = {
-  "up": { straight:1, corner:"topLeft", turnDir:7, turnString:"left", otherturn: "right"},
-  "right": { straight:3, corner:"topRight", turnDir:1, turnString:"up", otherturn: "down"},
-  "down": { straight:5, corner:"bottomRight", turnDir:3, turnString:"right", otherturn: "left"},
-  "left": { straight:7, corner:"bottomLeft", turnDir:5, turnString:"down", otherturn: "up"}
+  "up": {left:0, leftCorner:"bottomLeft", leftString:"left", straight:1, straightCorner:"topLeft", rightCorner:"topRight", rightString:"right"},
+  "right": {left:2, leftCorner:"topLeft", leftString:"up", straight:3, straightCorner:"topRight", rightCorner:"bottomRight", rightString:"down"},
+  "down": {left:4, leftCorner:"topRight", leftString:"right", straight:5, straightCorner:"bottomRight", rightCorner:"bottomLeft", rightString:"left"},
+  "left": {left:6, leftCorner:"bottomRight", leftString:"down", straight:7, straightCorner:"bottomLeft", rightCorner:"topLeft", rightString:"up"},
 };
 var image;
 var imageIdVar;
@@ -188,9 +188,6 @@ function getSiblingNode(node, directionsId) {
   var dirY = directions[directionsId].y*pixelTolerance;
   return {x:node.x+dirX, y:node.y+dirY};
 }
-// function getSiblingSolid(node, directionsId) {
-//   return isSolidNode(getSiblingNode(node, directionsId));
-// }
 
 function getCornerString(node, cornerString) {
   var distance = 1*pixelTolerance;
@@ -209,32 +206,30 @@ function getCornerString(node, cornerString) {
 var count = 0;
 function findNextNode(node, pathString) {
   count++;
+  var results;
   var dir = pathDirection[pathString];
-  var turnNode = getSiblingNode(node, dir.turnDir);
-  if (isSolidNode(turnNode)) {
-    // findNextNode(turnNode, dir.turnString);
-    return {status:"mapping", node:turnNode, dir:dir.turnString};
+  var leftNode = getSiblingNode(node, dir.left);
+
+  var straightNode = getSiblingNode(node, dir.straight);
+  if (!isSolidNode(straightNode)) {
+    results = [node, dir.rightCorner, dir.rightString];
   } else {
-    var nextPath = getCornerString(node, dir.corner);
-    if (nextPath !== startingPath) {
-      paths += nextPath;
-      var straightNode = getSiblingNode(node, dir.turnDir);
-      if (isSolidNode(straightNode)) {
-        // findNextNode(straightNode, pathString);
-        return {status:"mapping", node:straightNode, dir:pathString}
-      } else {
-        // findNextNode(node, dir.otherturn);
-        return {status:"mapping", node:node, dir:dir.otherturn}
-      }
+    var leftNode = getSiblingNode(node, dir.left);
+    if (!isSolidNode(leftNode)) {
+      results = [straightNode, dir.straightCorner, pathString];
     } else {
-      // renderPolygon();
-      return {status:"complete"}
+      results = [leftNode, dir.leftCorner, dir.leftString];
     }
   }
+  var newPath = getCornerString(results[0], results[1]);
+  if (newPath === startingPath) {
+    return {status:"complete"};
+  }
+  paths += newPath;
+  return {node:results[0], dir:results[2]};
 }
 
 function createPolygon(imageId) {
-  // console.log("0");
 
   imageIdVar = imageId;
   image = document.getElementById(imageId);
@@ -248,13 +243,13 @@ function createPolygon(imageId) {
   while (startingNode.x < image.width) {
     if (isSolidNode(startingNode)) {
       startingPath = paths = getCornerString(startingNode, "bottomLeft");
-      // paths += getCornerString(currentNode, "topLeft");
+      paths += getCornerString(startingNode, "topLeft");
       break;
     }
     startingNode.x++;
   }
 
-  var results = {status:"mapping", node:startingNode, dir:"up"};
+  var results = {node:startingNode, dir:"up"};
   while (results.status !== "complete") {
     results = findNextNode(results.node, results.dir);
   }
