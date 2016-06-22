@@ -177,22 +177,17 @@ var PngMask = function(className, options) {
       element.src = element.getAttribute("src");
       if (!masksBySrc[element.src]) {
         promiseArray.push(new Promise(function(resolve, reject) {
-          function waitForImageToLoad(element) {
+          function waitForImageToLoad(element, timeout) {
             setTimeout(function(){
               if (imgLoaded(element)) {
                 masksBySrc[element.src] = createPolygon(element);
                 // console.log(element.src+" done!");
                 return resolve(masksBySrc[element.src]);
               }
-              waitForImageToLoad(element);
-            }, 100);
+              waitForImageToLoad(element, 100);
+            }, timeout);
           }
-          if (imgLoaded(element)) {
-            masksBySrc[element.src] = createPolygon(element);
-            // console.log(element.src+" done!");
-            return resolve(masksBySrc[element.src]);
-          }
-          waitForImageToLoad(element);
+          waitForImageToLoad(element, 0);
         }));
       }
     }
