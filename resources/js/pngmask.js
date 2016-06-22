@@ -84,8 +84,6 @@ var PngMask = function(className, options) {
     }
     var newPath = getCornerString(results[0], results[1]);
     if (newPath === self.imageVars[element.src].startingPath) {
-      self.imageVars[element.src].startingPath = "";
-      self.imageVars[element.src].pathIndex++;
       return {status:"complete"};
     }
     addToImagePath(element, newPath);
@@ -127,6 +125,16 @@ var PngMask = function(className, options) {
     return svg;
   }
 
+  function pathExists(element, startPoint) {
+    for (var i = 0; i < self.imageVars[element.src].paths.length; i++) {
+      var path = self.imageVars[element.src].paths[i]
+      if (path.indexOf(startPoint) > -1) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   function createPolygon(element) {
     self.imageVars[element.src] = {
       startingPath: "",
@@ -135,32 +143,34 @@ var PngMask = function(className, options) {
     };
     createCanvas(element);
 
-
-
-
-
-
-    var halfHeight = Math.floor(element.height/2);
-    var startingNode = {x:0, y:halfHeight};
-    while (startingNode.x < element.width) {
-      if (isSolidNode(element, startingNode)) {
-        var start = getCornerString(startingNode, "bottomLeft");
-        self.imageVars[element.src].startingPath = start;
-        self.imageVars[element.src].paths[self.imageVars[element.src].pathIndex] = start;
-        addToImagePath(element, getCornerString(startingNode, "topLeft"));
-        break;
+    var inverse = false;
+    var yAxis = Math.floor(element.height/2);
+    var horizontalNode = {x:0, y:yAxis};
+    while (horizontalNode.x < element.width) {
+      if (isSolidNode(element, horizontalNode)!==inverse) {
+        var startNode = horizontalNode;
+        if (inverse) {
+          startNode.x--;
+        }
+        var startPoint = getCornerString(startNode, (inverse ? "topRight" : "bottomLeft"));
+        if (!pathExists(element, startPoint)) {
+          self.imageVars[element.src].startingPath = startPoint;
+          self.imageVars[element.src].paths[self.imageVars[element.src].pathIndex] = startPoint;
+          addToImagePath(element, getCornerString(startNode, (inverse ? "bottomRight" : "topLeft")));
+          
+          var results = {node:startNode, dir:(inverse ? "down" : "up")};
+          while (results.status !== "complete") {
+            results = findNextNode(element, results.node, results.dir);
+          }
+          self.imageVars[element.src].startingPath = "";
+          self.imageVars[element.src].pathIndex++;
+        }
+        
+        inverse = !inverse;
       }
-      startingNode.x++;
+      horizontalNode.x++;
     }
-    var results = {node:startingNode, dir:"up"};
-    while (results.status !== "complete") {
-      results = findNextNode(element, results.node, results.dir);
-    }
-
-
-
-
-
+    
     return renderPolygon(element);
   }
 
