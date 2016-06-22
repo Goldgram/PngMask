@@ -1,41 +1,11 @@
 <style>
-/*#svgClass {
-  width: 240px;
-  height: 240px;
-  background-image: url("hex.jpg");
-  background-size: contain;
-}
-#hexClass:hover {
-	cursor: pointer;
-	fill: green;
-	fill-opacity: 0;
-}
-.hover {
+polygon:hover {
   cursor: pointer;
-}
-#charizard:hover {
-  fill: red;
-  opacity: 0.5;
-}*/
-#charizard {
-  border: 1px solid grey;
-  cursor: pointer;
-}
-#charizard:hover {
-  opacity: 0.5;
-}
-.mask {
-  fill: black;
-}
-.mask:hover {
-  cursor: pointer;
-  fill-opacity: 0;
+  fill:red;
+  fill-opacity: 0.5;
 }
 </style>
 
-<!-- <svg id="svgClass" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
-  <polygon id="hexClass" points="64,23 177,23 235,121 177,219 64,219 7,121"></polygon>
-</svg> -->
 
 <!-- <img src="test.png"> -->
 <!-- <img id="hexImage" src="hex.png"> -->
@@ -57,9 +27,6 @@
 
 
 
-
-
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script>
 // class
 var PngMask = function(className, options) {
@@ -148,49 +115,23 @@ var PngMask = function(className, options) {
   }
 
   function renderPolygon(element) {
-    var svgString = '<svg style="width: '+element.width+'px;height: '+element.height+'px;background-size: contain;background-repeat: no-repeat;background-position: center; background-image: url('+element.getAttribute("src")+');" viewBox="0 0 '+element.width+' '+element.height+'" xmlns="http://www.w3.org/2000/svg">';
-    svgString +=      '<polygon class="mask" points="'+self.imageVars[element.src].paths+'"></polygon>';
-    svgString +=    '</svg>';
-
-
-    var container = document.createElement("div");
-    container.style.display = "inline";
-    container.innerHTML = svgString;
-
-    // var svg = document.createElement("svg");
-    // svg.width = element.width;
-    // svg.height = element.height;
-    // "width: '+element.width+'px;height: '++'pxsvg.setAttribute("style", "width: "+element.width+"px;height: "+element.height+"px");
-
-    // svg.setAttribute("viewbox", "0 0 "+element.width+" "+element.height);
-    // svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-    // var polygon = document.createElement("svg");
-    // polygon.setAttribute("style", "fill:red;");
-    // polygon.setAttribute("points", self.imageVars[element.src].paths);
-    // svg.appendChild(polygon);
-
-
-    // container.appendChild(element);
-    // svg.appendChild(polygon);
-    // container.appendChild(svg);
-    
-
-
-
-    // if (self.replaceImage) {
-    //   console.log(element.src);
-
-    //   // element.parentNode.replaceChild(container, element);
-    // //   // document.body.appendChild(svgString);
-    //   // $("body").append(svgString);
-    //   element.parentNode.insertBefore(container, element);
-    //   element.remove();
-    //   // element.parentNode.removeChild(element);
-
-      
-    // };
-    return container;
-    // document.body.appendChild(myElement);// need to turn string into element
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("width", element.width+"px");
+    svg.setAttribute("height", element.height+"px");
+    svg.setAttribute("viewBox", "0 0 "+element.width+" "+element.height+"");
+    svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    var svgimg = document.createElementNS("http://www.w3.org/2000/svg", "image");
+    svgimg.setAttribute("height", element.height);
+    svgimg.setAttribute("width", element.width);
+    svgimg.setAttribute("href", element.getAttribute("src"));
+    svgimg.setAttribute("x", "0");
+    svgimg.setAttribute("y", "0");
+    svg.appendChild(svgimg);
+    var polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    polygon.setAttribute("points", self.imageVars[element.src].paths);
+    polygon.setAttribute("fill", "transparent");
+    svg.appendChild(polygon);
+    return svg;
   }
 
   function createPolygon(element) {
@@ -215,26 +156,8 @@ var PngMask = function(className, options) {
     while (results.status !== "complete") {
       results = findNextNode(element, results.node, results.dir);
     }
-    // var newElement = renderPolygon(element);
-    // if (self.replaceImage) {
-
-    //   element.parentNode.replaceChild(newElement, element);
-    //   // document.body.appendChild(svgString);
-    //   // $("body").append(svgString);
-    // };
     return renderPolygon(element);
   }
-
-  function clone(obj) {
-    if (null == obj || "object" != typeof obj) return obj;
-    var copy = obj.constructor();
-    for (var attr in obj) {
-        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-    }
-    return copy;
-  }
-
-
 
   // create promise for the resulted svg
   return new Promise(function(resolve, reject) {
