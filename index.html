@@ -39,7 +39,9 @@
 
 <!-- <img src="test.png"> -->
 <!-- <img id="hexImage" src="hex.png"> -->
-<img id="charizard" src="charizard.png">
+<!-- <img id="charizard" src="charizard.png"> -->
+<img class="pokemon" src="charizard.png">
+<img class="pokemon" src="007.png">
 <!-- <img id="plusImage" src="plus.png"> -->
 <!-- <img id="testImage" src="y.png"> -->
 
@@ -159,7 +161,7 @@ var pixelTolerance = 1;
 // console.log(getSiblingSolid(currentNode, 6));
 
 
-var alphaTolerance = 10;
+var alphaTolerance = 100;
 var pathDirection = {
   "up": {left:0, leftCorner:"bottomLeft", leftString:"left", straight:1, straightCorner:"topLeft", rightCorner:"topRight", rightString:"right"},
   "right": {left:2, leftCorner:"topLeft", leftString:"up", straight:3, straightCorner:"topRight", rightCorner:"bottomRight", rightString:"down"},
@@ -167,7 +169,6 @@ var pathDirection = {
   "left": {left:6, leftCorner:"bottomRight", leftString:"down", straight:7, straightCorner:"bottomLeft", rightCorner:"topLeft", rightString:"up"},
 };
 var image;
-var imageIdVar;
 var canvas;
 var startingPath;
 var paths = "";
@@ -203,9 +204,7 @@ function getCornerString(node, cornerString) {
   }
 }
 
-var count = 0;
 function findNextNode(node, pathString) {
-  count++;
   var results;
   var dir = pathDirection[pathString];
   var leftNode = getSiblingNode(node, dir.left);
@@ -229,45 +228,143 @@ function findNextNode(node, pathString) {
   return {node:results[0], dir:results[2]};
 }
 
-function createPolygon(imageId) {
+// function createPolygon(image) {
+//   image = image;
+//   createCanvas(image);
 
-  imageIdVar = imageId;
-  image = document.getElementById(imageId);
-  createCanvas(image);
-
-
-  var halfHeight = Math.floor(image.height/2);
-  var startingNode = {x:0, y:halfHeight};
+//   var halfHeight = Math.floor(image.height/2);
+//   var startingNode = {x:0, y:halfHeight};
   
 
-  while (startingNode.x < image.width) {
-    if (isSolidNode(startingNode)) {
-      startingPath = paths = getCornerString(startingNode, "bottomLeft");
-      paths += getCornerString(startingNode, "topLeft");
-      break;
-    }
-    startingNode.x++;
-  }
+//   while (startingNode.x < image.width) {
+//     if (isSolidNode(startingNode)) {
+//       startingPath = paths = getCornerString(startingNode, "bottomLeft");
+//       paths += getCornerString(startingNode, "topLeft");
+//       break;
+//     }
+//     startingNode.x++;
+//   }
 
-  var results = {node:startingNode, dir:"up"};
-  while (results.status !== "complete") {
-    results = findNextNode(results.node, results.dir);
-  }
-  renderPolygon();
-  console.log(count);
-
-}
+//   var results = {node:startingNode, dir:"up"};
+//   while (results.status !== "complete") {
+//     results = findNextNode(results.node, results.dir);
+//   }
+//   renderPolygon();
+// }
 function renderPolygon() {
   // console.log("paths: "+paths);
-  var svgString = '<svg style="width: '+image.width+'px;height: '+image.height+'px;background-size: contain;background-repeat: no-repeat;background-position: center; background-image: url('+$("#"+imageIdVar).attr("src")+');" viewBox="0 0 '+image.width+' '+image.height+'" xmlns="http://www.w3.org/2000/svg">';
+  var svgString = '<svg style="width: '+image.width+'px;height: '+image.height+'px;background-size: contain;background-repeat: no-repeat;background-position: center; background-image: url('+image.getAttribute("src")+');" viewBox="0 0 '+image.width+' '+image.height+'" xmlns="http://www.w3.org/2000/svg">';
   svgString +=      '<polygon class="mask" points="'+paths+'"></polygon>';
   svgString +=    '</svg>';
+
+ 
   $("body").append(svgString);
 }
+
+// $.fn.imageLoad = function(fn){
+//   this.load(fn);
+//   this.each(function() {
+//     if ( this.complete && this.naturalWidth!==0 ) {
+//       $(this).trigger('load');
+//     }
+//   });
+// };
+
+// class
+var PngMask = function(className, options) {
+  this.mappingTolerance = options && options.mappingTolerance || 2;
+  this.alphaTolerance = options && options.alphaTolerance || 80;
+  
+  function imgLoaded(imageElement) {
+    return imageElement.complete && imageElement.naturalHeight !== 0;
+  }
+  
+  function createPolygon(imageElement) {
+    return imageElement;
+    // image = image;
+    // createCanvas(image);
+
+    // var halfHeight = Math.floor(image.height/2);
+    // var startingNode = {x:0, y:halfHeight};
+    
+
+    // while (startingNode.x < image.width) {
+    //   if (isSolidNode(startingNode)) {
+    //     startingPath = paths = getCornerString(startingNode, "bottomLeft");
+    //     paths += getCornerString(startingNode, "topLeft");
+    //     break;
+    //   }
+    //   startingNode.x++;
+    // }
+
+    // var results = {node:startingNode, dir:"up"};
+    // while (results.status !== "complete") {
+    //   results = findNextNode(results.node, results.dir);
+    // }
+    // renderPolygon();
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // create promise for the resulted svg
+  return new Promise(function(resolve, reject) {
+    var elements = document.getElementsByClassName(className);
+    if (!elements.length) {
+      return reject("cannot find class: "+className);
+    }
+    var masksBySrc = {};
+    var promiseArray = [];
+    for (var i = 0; i < elements.length; i++) {
+      var element = elements[i];
+      var src = element.getAttribute("src");
+      if (!masksBySrc[src]) {
+        promiseArray.push(new Promise(function(resolve, reject) {
+          function waitForImageToLoad(element) {
+            setTimeout(function(){
+              if (imgLoaded(element)) {
+                masksBySrc[src] = createPolygon(element);
+                return resolve(masksBySrc[src]);
+              }
+              waitForImageToLoad(element);
+            }, 1000);
+          }
+          if (imgLoaded(element)) {
+            masksBySrc[src] = createPolygon(element);
+            return resolve(masksBySrc[src]);
+          }
+          waitForImageToLoad(element);
+        }));
+      }
+    }
+    return Promise.all(promiseArray).then(function(values) { 
+      return resolve(masksBySrc);
+    });
+  });
+};
+
+
+
 
 
 
 $(function() {
-  createPolygon("charizard");
+  
+  var maskOne = new PngMask('pokemon');
+  maskOne.then(function(data){
+    console.log("Success - "+JSON.stringify(data));
+  },function(error){
+    console.log("Error - "+error);
+  });
+  
 });
 </script>
