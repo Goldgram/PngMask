@@ -43,8 +43,8 @@
 <!-- <img class="pokemon" src="006.png"> -->
 <img class="pokemon" src="007.png">
 <img class="pokemon" src="063.png">
-<!-- <img class="pokemon" src="092.png">
-<img class="pokemon" src="093.png"> -->
+<!-- <img class="pokemon" src="092.png"> -->
+<!-- <img class="pokemon" src="093.png"> -->
 <!-- <img id="plusImage" src="plus.png"> -->
 <!-- <img id="testImage" src="y.png"> -->
 
@@ -153,8 +153,9 @@ var PngMask = function(className, options) {
     svgString +=    '</svg>';
 
 
-    // var container = document.createElement("div");
-    // container.innerHTML = svgString;
+    var container = document.createElement("div");
+    container.style.display = "inline";
+    container.innerHTML = svgString;
 
     // var svg = document.createElement("svg");
     // svg.width = element.width;
@@ -176,13 +177,19 @@ var PngMask = function(className, options) {
 
 
 
-    if (self.replaceImage) {
+    // if (self.replaceImage) {
+    //   console.log(element.src);
 
-    //   element.parentNode.replaceChild(container, element);
-    //   // document.body.appendChild(svgString);
-      $("body").append(svgString);
-    };
-    return svgString;
+    //   // element.parentNode.replaceChild(container, element);
+    // //   // document.body.appendChild(svgString);
+    //   // $("body").append(svgString);
+    //   element.parentNode.insertBefore(container, element);
+    //   element.remove();
+    //   // element.parentNode.removeChild(element);
+
+      
+    // };
+    return container;
     // document.body.appendChild(myElement);// need to turn string into element
   }
 
@@ -218,6 +225,15 @@ var PngMask = function(className, options) {
     return renderPolygon(element);
   }
 
+  function clone(obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
+  }
+
 
 
   // create promise for the resulted svg
@@ -241,7 +257,7 @@ var PngMask = function(className, options) {
                 return resolve(masksBySrc[element.src]);
               }
               waitForImageToLoad(element);
-            }, 1000);
+            }, 100);
           }
           if (imgLoaded(element)) {
             masksBySrc[element.src] = createPolygon(element);
@@ -252,7 +268,10 @@ var PngMask = function(className, options) {
         }));
       }
     }
-    return Promise.all(promiseArray).then(function(values) { 
+    return Promise.all(promiseArray).then(function(values) {
+      for (var i = elements.length-1; i >= 0; i--) {
+        elements[i].parentNode.replaceChild(values[i], elements[i]);
+      }
       return resolve(masksBySrc);
     });
   });
