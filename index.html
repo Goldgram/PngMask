@@ -1,6 +1,5 @@
 <style>
 polygon:hover {
-  cursor: pointer;
   fill:red;
   fill-opacity: 0.5;
 }
@@ -11,7 +10,7 @@ polygon:hover {
 <!-- <img id="hexImage" src="hex.png"> -->
 <!-- <img id="charizard" src="charizard.png"> -->
 <!-- <img class="pokemon" src="006.png"> -->
-<img class="pokemon" src="007.png">
+<img id="what" class="pokemon" src="007.png" alt="stuff">
 <img class="pokemon" src="063.png">
 <!-- <img class="pokemon" src="092.png"> -->
 <!-- <img class="pokemon" src="093.png"> -->
@@ -120,6 +119,13 @@ var PngMask = function(className, options) {
     svg.setAttribute("height", element.height+"px");
     svg.setAttribute("viewBox", "0 0 "+element.width+" "+element.height+"");
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    for (var i = 0; i < element.attributes.length; i++) {
+      var key = element.attributes[i].nodeName;
+      var value = element.attributes[i].nodeValue;
+      if (key!=="src") {
+        svg.setAttribute(key, value);
+      }
+    }
     var svgimg = document.createElementNS("http://www.w3.org/2000/svg", "image");
     svgimg.setAttribute("height", element.height);
     svgimg.setAttribute("width", element.width);
@@ -130,6 +136,7 @@ var PngMask = function(className, options) {
     var polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
     polygon.setAttribute("points", self.imageVars[element.src].paths);
     polygon.setAttribute("fill", "transparent");
+    polygon.setAttribute("style", "cursor:pointer;");
     svg.appendChild(polygon);
     return svg;
   }
@@ -204,6 +211,7 @@ var PngMask = function(className, options) {
 var maskOne = new PngMask('pokemon');
 maskOne.then(function(data){
   console.log("Success - "+JSON.stringify(data));
+  // add event listeners here
 },function(error){
   console.log("Error - "+error);
 });
