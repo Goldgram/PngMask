@@ -40,8 +40,11 @@
 <!-- <img src="test.png"> -->
 <!-- <img id="hexImage" src="hex.png"> -->
 <!-- <img id="charizard" src="charizard.png"> -->
-<img class="pokemon" src="charizard.png">
+<!-- <img class="pokemon" src="006.png"> -->
 <img class="pokemon" src="007.png">
+<img class="pokemon" src="063.png">
+<!-- <img class="pokemon" src="092.png">
+<img class="pokemon" src="093.png"> -->
 <!-- <img id="plusImage" src="plus.png"> -->
 <!-- <img id="testImage" src="y.png"> -->
 
@@ -134,18 +137,18 @@
 // 0:-1,-1  1:0,-1  2:1,-1
 // 7:-1,0   X:0,0   3:1,0
 // 6:-1,1   5:0,1   4:1,1
-var directions = [
-  {x:-1,y:-1},
-  {x:0,y:-1},
-  {x:1,y:-1},
-  {x:1,y:0},
-  {x:1,y:1},
-  {x:0,y:1},
-  {x:-1,y:1},
-  {x:-1,y:0}
-];
+// var directions = [
+//   {x:-1,y:-1},
+//   {x:0,y:-1},
+//   {x:1,y:-1},
+//   {x:1,y:0},
+//   {x:1,y:1},
+//   {x:0,y:1},
+//   {x:-1,y:1},
+//   {x:-1,y:0}
+// ];
 
-var pixelTolerance = 1;
+// var pixelTolerance = 1;
 
 
 
@@ -161,72 +164,72 @@ var pixelTolerance = 1;
 // console.log(getSiblingSolid(currentNode, 6));
 
 
-var alphaTolerance = 100;
-var pathDirection = {
-  "up": {left:0, leftCorner:"bottomLeft", leftString:"left", straight:1, straightCorner:"topLeft", rightCorner:"topRight", rightString:"right"},
-  "right": {left:2, leftCorner:"topLeft", leftString:"up", straight:3, straightCorner:"topRight", rightCorner:"bottomRight", rightString:"down"},
-  "down": {left:4, leftCorner:"topRight", leftString:"right", straight:5, straightCorner:"bottomRight", rightCorner:"bottomLeft", rightString:"left"},
-  "left": {left:6, leftCorner:"bottomRight", leftString:"down", straight:7, straightCorner:"bottomLeft", rightCorner:"topLeft", rightString:"up"},
-};
-var image;
-var canvas;
-var startingPath;
-var paths = "";
+// var alphaTolerance = 100;
+// var pathDirection = {
+//   "up": {left:0, leftCorner:"bottomLeft", leftString:"left", straight:1, straightCorner:"topLeft", rightCorner:"topRight", rightString:"right"},
+//   "right": {left:2, leftCorner:"topLeft", leftString:"up", straight:3, straightCorner:"topRight", rightCorner:"bottomRight", rightString:"down"},
+//   "down": {left:4, leftCorner:"topRight", leftString:"right", straight:5, straightCorner:"bottomRight", rightCorner:"bottomLeft", rightString:"left"},
+//   "left": {left:6, leftCorner:"bottomRight", leftString:"down", straight:7, straightCorner:"bottomLeft", rightCorner:"topLeft", rightString:"up"},
+// };
+// var image;
+// var canvas;
+// var startingPath;
+// var paths = "";
 
-function createCanvas(image) {
-  canvas = document.createElement('canvas');
-  canvas.width = image.width;
-  canvas.height = image.height;
-  canvas.getContext("2d").drawImage(image, 0, 0, image.width, image.height);
-}
-function isSolidNode(node) {
-  var alpha = canvas.getContext("2d").getImageData(node.x, node.y, 1, 1).data[3];
-  return alpha > alphaTolerance;
-}
+// function createCanvas(image) {
+//   canvas = document.createElement('canvas');
+//   canvas.width = image.width;
+//   canvas.height = image.height;
+//   canvas.getContext("2d").drawImage(image, 0, 0, image.width, image.height);
+// }
+// function isSolidNode(node) {
+//   var alpha = canvas.getContext("2d").getImageData(node.x, node.y, 1, 1).data[3];
+//   return alpha > alphaTolerance;
+// }
 
-function getSiblingNode(node, directionsId) {
-  var dirX = directions[directionsId].x*pixelTolerance;
-  var dirY = directions[directionsId].y*pixelTolerance;
-  return {x:node.x+dirX, y:node.y+dirY};
-}
+// function getSiblingNode(node, directionsId) {
+//   var dirX = directions[directionsId].x*pixelTolerance;
+//   var dirY = directions[directionsId].y*pixelTolerance;
+//   return {x:node.x+dirX, y:node.y+dirY};
+// }
 
-function getCornerString(node, cornerString) {
-  var distance = 1*pixelTolerance;
-  switch (cornerString) {
-    case "topLeft":
-      return " "+node.x+","+node.y;
-    case "bottomLeft":
-      return " "+node.x+","+(node.y+distance);
-    case "topRight":
-      return " "+(node.x+distance)+","+node.y;
-    case "bottomRight":
-      return " "+(node.x+distance)+","+(node.y+distance);
-  }
-}
+// function getCornerString(node, cornerString) {
+//   var distance = 1*pixelTolerance;
+//   switch (cornerString) {
+//     case "topLeft":
+//       return " "+node.x+","+node.y;
+//     case "bottomLeft":
+//       return " "+node.x+","+(node.y+distance);
+//     case "topRight":
+//       return " "+(node.x+distance)+","+node.y;
+//     case "bottomRight":
+//       return " "+(node.x+distance)+","+(node.y+distance);
+//   }
+// }
 
-function findNextNode(node, pathString) {
-  var results;
-  var dir = pathDirection[pathString];
-  var leftNode = getSiblingNode(node, dir.left);
+// function findNextNode(node, pathString) {
+//   var results;
+//   var dir = pathDirection[pathString];
+//   var leftNode = getSiblingNode(node, dir.left);
 
-  var straightNode = getSiblingNode(node, dir.straight);
-  if (!isSolidNode(straightNode)) {
-    results = [node, dir.rightCorner, dir.rightString];
-  } else {
-    var leftNode = getSiblingNode(node, dir.left);
-    if (!isSolidNode(leftNode)) {
-      results = [straightNode, dir.straightCorner, pathString];
-    } else {
-      results = [leftNode, dir.leftCorner, dir.leftString];
-    }
-  }
-  var newPath = getCornerString(results[0], results[1]);
-  if (newPath === startingPath) {
-    return {status:"complete"};
-  }
-  paths += newPath;
-  return {node:results[0], dir:results[2]};
-}
+//   var straightNode = getSiblingNode(node, dir.straight);
+//   if (!isSolidNode(straightNode)) {
+//     results = [node, dir.rightCorner, dir.rightString];
+//   } else {
+//     var leftNode = getSiblingNode(node, dir.left);
+//     if (!isSolidNode(leftNode)) {
+//       results = [straightNode, dir.straightCorner, pathString];
+//     } else {
+//       results = [leftNode, dir.leftCorner, dir.leftString];
+//     }
+//   }
+//   var newPath = getCornerString(results[0], results[1]);
+//   if (newPath === startingPath) {
+//     return {status:"complete"};
+//   }
+//   paths += newPath;
+//   return {node:results[0], dir:results[2]};
+// }
 
 // function createPolygon(image) {
 //   image = image;
@@ -251,68 +254,137 @@ function findNextNode(node, pathString) {
 //   }
 //   renderPolygon();
 // }
-function renderPolygon() {
-  // console.log("paths: "+paths);
-  var svgString = '<svg style="width: '+image.width+'px;height: '+image.height+'px;background-size: contain;background-repeat: no-repeat;background-position: center; background-image: url('+image.getAttribute("src")+');" viewBox="0 0 '+image.width+' '+image.height+'" xmlns="http://www.w3.org/2000/svg">';
-  svgString +=      '<polygon class="mask" points="'+paths+'"></polygon>';
-  svgString +=    '</svg>';
+// function renderPolygon(element) {
+//   // console.log("paths: "+paths);
+//   var svgString = '<svg style="width: '+element.width+'px;height: '+element.height+'px;background-size: contain;background-repeat: no-repeat;background-position: center; background-image: url('+element.getAttribute("src")+');" viewBox="0 0 '+element.width+' '+element.height+'" xmlns="http://www.w3.org/2000/svg">';
+//   svgString +=      '<polygon class="mask" points="'+self.imageVars[element.src].paths+'"></polygon>';
+//   svgString +=    '</svg>';
 
  
-  $("body").append(svgString);
-}
+//   $("body").append(svgString);
+//   // document.body.appendChild(myElement);// need to turn string into element
+// }
 
-// $.fn.imageLoad = function(fn){
-//   this.load(fn);
-//   this.each(function() {
-//     if ( this.complete && this.naturalWidth!==0 ) {
-//       $(this).trigger('load');
-//     }
-//   });
-// };
 
 // class
 var PngMask = function(className, options) {
-  this.mappingTolerance = options && options.mappingTolerance || 2;
+  var self = this;
+  this.mappingTolerance = options && options.mappingTolerance || 1;
   this.alphaTolerance = options && options.alphaTolerance || 80;
-  
-  function imgLoaded(imageElement) {
-    return imageElement.complete && imageElement.naturalHeight !== 0;
-  }
-  
-  function createPolygon(imageElement) {
-    return imageElement;
-    // image = image;
-    // createCanvas(image);
 
-    // var halfHeight = Math.floor(image.height/2);
-    // var startingNode = {x:0, y:halfHeight};
+  this.imageVars = {};
+  var directions = [
+    {x:-1,y:-1},
+    {x:0,y:-1},
+    {x:1,y:-1},
+    {x:1,y:0},
+    {x:1,y:1},
+    {x:0,y:1},
+    {x:-1,y:1},
+    {x:-1,y:0}
+  ];
+  var pathDirection = {
+    "up": {left:0, leftCorner:"bottomLeft", leftString:"left", straight:1, straightCorner:"topLeft", rightCorner:"topRight", rightString:"right"},
+    "right": {left:2, leftCorner:"topLeft", leftString:"up", straight:3, straightCorner:"topRight", rightCorner:"bottomRight", rightString:"down"},
+    "down": {left:4, leftCorner:"topRight", leftString:"right", straight:5, straightCorner:"bottomRight", rightCorner:"bottomLeft", rightString:"left"},
+    "left": {left:6, leftCorner:"bottomRight", leftString:"down", straight:7, straightCorner:"bottomLeft", rightCorner:"topLeft", rightString:"up"},
+  };
+  
+  function imgLoaded(element) {
+    return element.complete && element.naturalHeight !== 0;
+  }
+
+  function createCanvas(element) {
+    var canvas = document.createElement('canvas');
+    canvas.width = element.width;
+    canvas.height = element.height;
+    canvas.getContext("2d").drawImage(element, 0, 0, element.width, element.height);
+    self.imageVars[element.src].canvas = canvas;
+  }
+
+  function isSolidNode(element, node) {
+    var alpha = self.imageVars[element.src].canvas.getContext("2d").getImageData(node.x, node.y, 1, 1).data[3];
+    return alpha > self.alphaTolerance;
+  }
+
+  function getCornerString(node, cornerString) {
+    switch (cornerString) {
+      case "topLeft":
+        return " "+node.x+","+node.y;
+      case "bottomLeft":
+        return " "+node.x+","+(node.y+self.mappingTolerance);
+      case "topRight":
+        return " "+(node.x+self.mappingTolerance)+","+node.y;
+      case "bottomRight":
+        return " "+(node.x+self.mappingTolerance)+","+(node.y+self.mappingTolerance);
+    }
+  }
+
+  function getSiblingNode(node, directionsId) {
+    var dirX = directions[directionsId].x*self.mappingTolerance;
+    var dirY = directions[directionsId].y*self.mappingTolerance;
+    return {x:node.x+dirX, y:node.y+dirY};
+  }
+
+  function findNextNode(element, node, pathString) {
+    var results;
+    var dir = pathDirection[pathString];
+    var leftNode = getSiblingNode(node, dir.left);
+
+    var straightNode = getSiblingNode(node, dir.straight);
+    if (!isSolidNode(element, straightNode)) {
+      results = [node, dir.rightCorner, dir.rightString];
+    } else {
+      var leftNode = getSiblingNode(node, dir.left);
+      if (!isSolidNode(element, leftNode)) {
+        results = [straightNode, dir.straightCorner, pathString];
+      } else {
+        results = [leftNode, dir.leftCorner, dir.leftString];
+      }
+    }
+    var newPath = getCornerString(results[0], results[1]);
+    if (newPath === self.imageVars[element.src].startingPath) {
+      return {status:"complete"};
+    }
+    self.imageVars[element.src].paths += newPath;
+    return {node:results[0], dir:results[2]};
+  }
+
+  function renderPolygon(element) {
+    var svgString = '<svg style="width: '+element.width+'px;height: '+element.height+'px;background-size: contain;background-repeat: no-repeat;background-position: center; background-image: url('+element.getAttribute("src")+');" viewBox="0 0 '+element.width+' '+element.height+'" xmlns="http://www.w3.org/2000/svg">';
+    svgString +=      '<polygon class="mask" points="'+self.imageVars[element.src].paths+'"></polygon>';
+    svgString +=    '</svg>';
+    // document.body.appendChild(svgString);
+    $("body").append(svgString);
+    return svgString;
+    // document.body.appendChild(myElement);// need to turn string into element
+  }
+
+  function createPolygon(element) {
+    self.imageVars[element.src] = {
+      startingPath: "",
+      paths: ""
+    };
+    createCanvas(element);
+
+    var halfHeight = Math.floor(element.height/2);
+    var startingNode = {x:0, y:halfHeight};
     
 
-    // while (startingNode.x < image.width) {
-    //   if (isSolidNode(startingNode)) {
-    //     startingPath = paths = getCornerString(startingNode, "bottomLeft");
-    //     paths += getCornerString(startingNode, "topLeft");
-    //     break;
-    //   }
-    //   startingNode.x++;
-    // }
-
-    // var results = {node:startingNode, dir:"up"};
-    // while (results.status !== "complete") {
-    //   results = findNextNode(results.node, results.dir);
-    // }
-    // renderPolygon();
+    while (startingNode.x < element.width) {
+      if (isSolidNode(element, startingNode)) {
+        self.imageVars[element.src].startingPath = self.imageVars[element.src].paths = getCornerString(startingNode, "bottomLeft");
+        self.imageVars[element.src].paths += getCornerString(startingNode, "topLeft");
+        break;
+      }
+      startingNode.x++;
+    }
+    var results = {node:startingNode, dir:"up"};
+    while (results.status !== "complete") {
+      results = findNextNode(element, results.node, results.dir);
+    }
+    return renderPolygon(element);
   }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -326,21 +398,24 @@ var PngMask = function(className, options) {
     var promiseArray = [];
     for (var i = 0; i < elements.length; i++) {
       var element = elements[i];
-      var src = element.getAttribute("src");
-      if (!masksBySrc[src]) {
+      element.src = element.getAttribute("src");
+      // var src = element.getAttribute("src");
+      if (!masksBySrc[element.src]) {
         promiseArray.push(new Promise(function(resolve, reject) {
           function waitForImageToLoad(element) {
             setTimeout(function(){
               if (imgLoaded(element)) {
-                masksBySrc[src] = createPolygon(element);
-                return resolve(masksBySrc[src]);
+                masksBySrc[element.src] = createPolygon(element);
+                // console.log(element.src+" done!");
+                return resolve(masksBySrc[element.src]);
               }
               waitForImageToLoad(element);
             }, 1000);
           }
           if (imgLoaded(element)) {
-            masksBySrc[src] = createPolygon(element);
-            return resolve(masksBySrc[src]);
+            masksBySrc[element.src] = createPolygon(element);
+            // console.log(element.src+" done!");
+            return resolve(masksBySrc[element.src]);
           }
           waitForImageToLoad(element);
         }));
@@ -351,11 +426,6 @@ var PngMask = function(className, options) {
     });
   });
 };
-
-
-
-
-
 
 $(function() {
   
