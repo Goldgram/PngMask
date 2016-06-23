@@ -36,11 +36,11 @@ var PngMask = function(className, options) {
     canvas.width = element.width;
     canvas.height = element.height;
     canvas.getContext("2d").drawImage(element, 0, 0, element.width, element.height);
-    self.imageVars[element.src].canvas = canvas;
+    self.imageVars[element.src].canvasContext = canvas.getContext("2d");
   }
 
   function isSolidNode(element, node) {
-    var alpha = self.imageVars[element.src].canvas.getContext("2d").getImageData(node.x, node.y, 1, 1).data[3];
+    var alpha = self.imageVars[element.src].canvasContext.getImageData(node.x, node.y, 1, 1).data[3];
     return alpha > self.alphaTolerance;
   }
 
@@ -92,15 +92,17 @@ var PngMask = function(className, options) {
   }
 
   function renderPolygon(element) {
+    var elementWidth = element.width-1;
+    var elementHeight = element.height-1;
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("width", element.width+"px");
-    svg.setAttribute("height", element.height+"px");
-    svg.setAttribute("viewBox", "0 0 "+element.width+" "+element.height+"");
+    svg.setAttribute("width", elementWidth+"px");
+    svg.setAttribute("height", elementHeight+"px");
+    svg.setAttribute("viewBox", "0 0 "+elementWidth+" "+elementHeight+"");
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
     var svgimg = document.createElementNS("http://www.w3.org/2000/svg", "image");
     svgimg.setAttribute("class", "png-mask-image");
-    svgimg.setAttribute("height", element.height);
-    svgimg.setAttribute("width", element.width);
+    svgimg.setAttribute("height", elementHeight);
+    svgimg.setAttribute("width", elementWidth);
     svgimg.setAttribute("href", element.getAttribute("src"));
     svgimg.setAttribute("x", "0");
     svgimg.setAttribute("y", "0");

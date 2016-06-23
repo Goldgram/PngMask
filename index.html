@@ -5,25 +5,21 @@ path:hover {
 }
 </style>
 
-<!-- <img class="pokemon" src="./resources/images/007.png"> -->
-<!-- <img class="pokemon" src="./resources/images/063.png"> -->
-<!-- <img class="pokemon" src="./resources/images/092.png"> -->
+<img class="pokemon" src="./resources/images/007.png">
+<img class="pokemon" src="./resources/images/063.png">
+<img class="pokemon-plus" src="./resources/images/092.png">
 <img class="pokemon" src="./resources/images/093.png">
 <img class="pokemon" src="./resources/images/151.png">
-
-
-
-
-
-
 
 
 
 <script type="text/javascript" src="resources/js/pngmask.js"></script>
 <script>
 // class use!!!
-var maskOne = new PngMask('pokemon');
-maskOne.then(function(data){
+var masksOne = new PngMask('pokemon');
+var masksTwo= new PngMask('pokemon-plus', {searchTolerance: 14});
+
+masksOne.then(function(data){
   console.log("Success - "+JSON.stringify(data));
   // add event listeners here
 },function(error){
