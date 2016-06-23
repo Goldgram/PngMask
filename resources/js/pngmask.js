@@ -22,6 +22,7 @@ var PngMask = function(className, options) {
 
   this.mappingTolerance = options && options.mappingTolerance || 1;
   this.alphaTolerance = options && options.alphaTolerance || 80;
+  this.searchTolerance = options && options.searchTolerance || 3;
   this.replaceImage = options && options.replaceImage || true;
   this.imageVars = {};
   
@@ -44,16 +45,6 @@ var PngMask = function(className, options) {
   }
 
   function getCornerString(node, cornerString, startOfPath) {
-    // switch (cornerString) {
-    //   case "topLeft":
-    //     return " "+node.x+","+node.y;
-    //   case "bottomLeft":
-    //     return " "+node.x+","+(node.y+self.mappingTolerance);
-    //   case "topRight":
-    //     return " "+(node.x+self.mappingTolerance)+","+node.y;
-    //   case "bottomRight":
-    //     return " "+(node.x+self.mappingTolerance)+","+(node.y+self.mappingTolerance);
-    // }
     switch (cornerString) {
       case "topLeft":
         return node.x+" "+node.y+" ";
@@ -154,33 +145,37 @@ var PngMask = function(className, options) {
     };
     createCanvas(element);
 
-    var inverse = false;
-    var yAxis = Math.floor(element.height/2);
-    var horizontalNode = {x:0, y:yAxis};
-    while (horizontalNode.x < element.width) {
-      if (isSolidNode(element, horizontalNode)!==inverse) {
-        var startNode = horizontalNode;
-        if (inverse) {
-          startNode.x--;
-        }
-        var startPoint = getCornerString(startNode, (inverse ? "topRight" : "bottomLeft"), true);
-        if (!pathExists(element, startPoint)) {
-          self.imageVars[element.src].startingPath = startPoint;
-          self.imageVars[element.src].paths[self.imageVars[element.src].pathIndex] = "M"+startPoint;
-          addToImagePath(element, "L"+getCornerString(startNode, (inverse ? "bottomRight" : "topLeft"), false));
-          
-          var results = {node:startNode, dir:(inverse ? "down" : "up")};
-          while (results.status !== "complete") {
-            results = findNextNode(element, results.node, results.dir);
+    // search image
+    var searchPitch = Math.floor(element.height/(self.searchTolerance+1));
+    for (var i = 1; i <= self.searchTolerance; i++) {
+      var yAxis = i*searchPitch;
+      var inverse = false;
+      var horizontalNode = {x:0, y:yAxis};
+      while (horizontalNode.x < element.width) {
+        if (isSolidNode(element, horizontalNode)!==inverse) {
+          var startNode = horizontalNode;
+          if (inverse) {
+            startNode.x--;
           }
-          self.imageVars[element.src].startingPath = "";
-          self.imageVars[element.src].pathIndex++;
+          var startPoint = getCornerString(startNode, (inverse ? "topRight" : "bottomLeft"), true);
+          if (!pathExists(element, startPoint)) {
+            self.imageVars[element.src].startingPath = startPoint;
+            self.imageVars[element.src].paths[self.imageVars[element.src].pathIndex] = "M"+startPoint;
+            addToImagePath(element, "L"+getCornerString(startNode, (inverse ? "bottomRight" : "topLeft"), false));
+            
+            var results = {node:startNode, dir:(inverse ? "down" : "up")};
+            while (results.status !== "complete") {
+              results = findNextNode(element, results.node, results.dir);
+            }
+            self.imageVars[element.src].startingPath = "";
+            self.imageVars[element.src].pathIndex++;
+          }
+          
+          inverse = !inverse;
+          // break;
         }
-        
-        inverse = !inverse;
-        // break;
+        horizontalNode.x++;
       }
-      horizontalNode.x++;
     }
 
     return renderPolygon(element);
