@@ -199,7 +199,11 @@ var PngMask = function(className, options) {
         horizontalNode.x++;
       }
     }
-    return renderPaths(element);
+    return self.imageVars[element.src].paths.length > 0;
+  }
+
+  function isImage(element) {
+    return element instanceof HTMLImageElement;
   }
 
   // create promise for the resulted svg
@@ -214,6 +218,9 @@ var PngMask = function(className, options) {
     for (var i = 0; i < elements.length; i++) {
       var imagePromise;
       var element = elements[i];
+      if (!isImage(element)) {
+        return reject("element is not an image: "+element);
+      }
       element.src = element.getAttribute("src");
       if (!masksBySrc[element.src]) {
         masksBySrc[element.src] = {};
@@ -221,7 +228,10 @@ var PngMask = function(className, options) {
           function waitForImageToLoad(element, timeout) {
             setTimeout(function(){
               if (imgLoaded(element)) {
-                masksBySrc[element.src] = createPath(element);
+                if (!createPath(element)) {
+                  return reject("image has no alpha above the tolerance: "+element);
+                }
+                masksBySrc[element.src] = renderPaths(element);
                 if (self.debug.on) {
                   self.debug.completeCount++;
                   console.log(element.src+" mask calculated ("+self.debug.completeCount+" of "+Object.keys(masksBySrc).length+")");
