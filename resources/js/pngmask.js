@@ -92,17 +92,15 @@ var PngMask = function(className, options) {
   }
 
   function renderPolygon(element) {
-    var elementWidth = element.width-1;
-    var elementHeight = element.height-1;
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("width", elementWidth+"px");
-    svg.setAttribute("height", elementHeight+"px");
-    svg.setAttribute("viewBox", "0 0 "+elementWidth+" "+elementHeight+"");
+    svg.setAttribute("width", element.width+"px");
+    svg.setAttribute("height", element.height+"px");
+    svg.setAttribute("viewBox", "0 0 "+element.width+" "+element.height+"");
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
     var svgimg = document.createElementNS("http://www.w3.org/2000/svg", "image");
     svgimg.setAttribute("class", "png-mask-image");
-    svgimg.setAttribute("height", elementHeight);
-    svgimg.setAttribute("width", elementWidth);
+    svgimg.setAttribute("height", element.height);
+    svgimg.setAttribute("width", element.width);
     svgimg.setAttribute("href", element.getAttribute("src"));
     svgimg.setAttribute("x", "0");
     svgimg.setAttribute("y", "0");
@@ -189,30 +187,40 @@ var PngMask = function(className, options) {
     if (!elements.length) {
       return reject("cannot find class: "+className);
     }
+
     var masksBySrc = {};
     var promiseArray = [];
     for (var i = 0; i < elements.length; i++) {
+      var imagePromise;
       var element = elements[i];
       element.src = element.getAttribute("src");
       if (!masksBySrc[element.src]) {
-        promiseArray.push(new Promise(function(resolve, reject) {
+        masksBySrc[element.src] = {};
+        imagePromise = new Promise(function(resolve, reject) {
           function waitForImageToLoad(element, timeout) {
             setTimeout(function(){
               if (imgLoaded(element)) {
                 masksBySrc[element.src] = createPolygon(element);
-                // console.log(element.src+" done!");
-                return resolve(masksBySrc[element.src]);
+                console.log(element.src+" done!");
+                return resolve(element.src);
               }
               waitForImageToLoad(element, 100);
             }, timeout);
           }
           waitForImageToLoad(element, 0);
-        }));
+        });
+      } else {
+        imagePromise = new Promise(function(resolve, reject) {
+          return resolve(element.src);
+        });
       }
+      promiseArray.push(imagePromise);
     }
     return Promise.all(promiseArray).then(function(values) {
       for (var i = elements.length-1; i >= 0; i--) {
-        elements[i].parentNode.replaceChild(values[i], elements[i]);
+        var mask = masksBySrc[values[i]].cloneNode(true);
+        var element = elements[i];
+        elements[i].parentNode.replaceChild(mask, element);
       }
       return resolve(masksBySrc);
     });
