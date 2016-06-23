@@ -31,13 +31,12 @@ var PngMask = function(className, options) {
     
   this.imageVars = {};
   
-  
   function imgLoaded(element) {
     return element.complete && element.naturalHeight !== 0;
   }
 
   function createCanvas(element) {
-    var canvas = document.createElement('canvas');
+    var canvas = document.createElement("canvas");
     canvas.width = element.width;
     canvas.height = element.height;
     canvas.getContext("2d").drawImage(element, 0, 0, element.width, element.height);
@@ -96,6 +95,16 @@ var PngMask = function(className, options) {
     return {node:results[0], dir:results[2]};
   }
 
+  function generateRandomHexColor() {
+    var string = "#";
+    var colors = "0123456789ABCDEF".split("");
+    string += colors[colors.length-1-Math.round(Math.random() * 4)];
+    for (var i = 0; i < 5; i++) {
+      string += colors[Math.floor((Math.random() * colors.length))];
+    }
+    return string;
+  }
+
   function renderPaths(element) {
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("width", element.width+"px");
@@ -117,7 +126,16 @@ var PngMask = function(className, options) {
     var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     path.setAttribute("class", "png-mask");
     path.setAttribute("d", pathD);
-    path.setAttribute("fill", "transparent");
+    if (self.debug.on) {
+      path.setAttribute("fill", generateRandomHexColor());
+      path.setAttribute("fill-opacity", 0.75);
+      var style = document.createElement("style");
+      style.type = "text/css";
+      style.appendChild(document.createTextNode(".png-mask:hover {fill-opacity:0.25;}"));
+      document.head.appendChild(style);
+    } else {
+      path.setAttribute("fill", "transparent");
+    }
     path.setAttribute("style", "cursor:pointer;");
     svg.appendChild(path);
     // add image attributes
