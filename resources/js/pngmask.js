@@ -43,16 +43,26 @@ var PngMask = function(className, options) {
     return alpha > self.alphaTolerance;
   }
 
-  function getCornerString(node, cornerString) {
+  function getCornerString(node, cornerString, startOfPath) {
+    // switch (cornerString) {
+    //   case "topLeft":
+    //     return " "+node.x+","+node.y;
+    //   case "bottomLeft":
+    //     return " "+node.x+","+(node.y+self.mappingTolerance);
+    //   case "topRight":
+    //     return " "+(node.x+self.mappingTolerance)+","+node.y;
+    //   case "bottomRight":
+    //     return " "+(node.x+self.mappingTolerance)+","+(node.y+self.mappingTolerance);
+    // }
     switch (cornerString) {
       case "topLeft":
-        return " "+node.x+","+node.y;
+        return node.x+" "+node.y+" ";
       case "bottomLeft":
-        return " "+node.x+","+(node.y+self.mappingTolerance);
+        return node.x+" "+(node.y+self.mappingTolerance)+" ";
       case "topRight":
-        return " "+(node.x+self.mappingTolerance)+","+node.y;
+        return (node.x+self.mappingTolerance)+" "+node.y+" ";
       case "bottomRight":
-        return " "+(node.x+self.mappingTolerance)+","+(node.y+self.mappingTolerance);
+        return (node.x+self.mappingTolerance)+" "+(node.y+self.mappingTolerance)+" ";
     }
   }
 
@@ -82,11 +92,11 @@ var PngMask = function(className, options) {
         results = [leftNode, dir.leftCorner, dir.leftString];
       }
     }
-    var newPath = getCornerString(results[0], results[1]);
+    var newPath = getCornerString(results[0], results[1], false);
     if (newPath === self.imageVars[element.src].startingPath) {
       return {status:"complete"};
     }
-    addToImagePath(element, newPath);
+    addToImagePath(element, "L"+newPath);
     return {node:results[0], dir:results[2]};
   }
 
@@ -104,16 +114,16 @@ var PngMask = function(className, options) {
     svgimg.setAttribute("x", "0");
     svgimg.setAttribute("y", "0");
     svg.appendChild(svgimg);
-    // add paths
+    var pathD = "";
     for (var i = 0; i < self.imageVars[element.src].paths.length; i++) {
-      var path = self.imageVars[element.src].paths[i];
-      var polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-      polygon.setAttribute("class", "png-mask");
-      polygon.setAttribute("points", path);
-      polygon.setAttribute("fill", "transparent");
-      polygon.setAttribute("style", "cursor:pointer;");
-      svg.appendChild(polygon);
+      pathD += self.imageVars[element.src].paths[i] + "Z ";
     }
+    var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("class", "png-mask");
+    path.setAttribute("d", pathD);
+    path.setAttribute("fill", "transparent");
+    path.setAttribute("style", "cursor:pointer;");
+    svg.appendChild(path);
     // add image attributes
     for (var i = 0; i < element.attributes.length; i++) {
       var key = element.attributes[i].nodeName;
@@ -126,6 +136,7 @@ var PngMask = function(className, options) {
   }
 
   function pathExists(element, startPoint) {
+    var RemoveFirstLetter = startPoint.slice(1);
     for (var i = 0; i < self.imageVars[element.src].paths.length; i++) {
       var path = self.imageVars[element.src].paths[i]
       if (path.indexOf(startPoint) > -1) {
@@ -152,11 +163,11 @@ var PngMask = function(className, options) {
         if (inverse) {
           startNode.x--;
         }
-        var startPoint = getCornerString(startNode, (inverse ? "topRight" : "bottomLeft"));
+        var startPoint = getCornerString(startNode, (inverse ? "topRight" : "bottomLeft"), true);
         if (!pathExists(element, startPoint)) {
           self.imageVars[element.src].startingPath = startPoint;
-          self.imageVars[element.src].paths[self.imageVars[element.src].pathIndex] = startPoint;
-          addToImagePath(element, getCornerString(startNode, (inverse ? "bottomRight" : "topLeft")));
+          self.imageVars[element.src].paths[self.imageVars[element.src].pathIndex] = "M"+startPoint;
+          addToImagePath(element, "L"+getCornerString(startNode, (inverse ? "bottomRight" : "topLeft"), false));
           
           var results = {node:startNode, dir:(inverse ? "down" : "up")};
           while (results.status !== "complete") {
@@ -167,10 +178,11 @@ var PngMask = function(className, options) {
         }
         
         inverse = !inverse;
+        // break;
       }
       horizontalNode.x++;
     }
-    
+
     return renderPolygon(element);
   }
 
