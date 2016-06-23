@@ -22,8 +22,13 @@ var PngMask = function(className, options) {
 
   this.mappingTolerance = options && options.mappingTolerance || 1;
   this.alphaTolerance = options && options.alphaTolerance || 80;
-  this.searchTolerance = options && options.searchTolerance || 3;
+  this.searchTolerance = options && options.searchTolerance || 1;
   this.replaceImage = options && options.replaceImage || true;
+  this.debug = {
+    on: (options && options.debug || false),
+    completeCount: 0
+  }
+    
   this.imageVars = {};
   
   
@@ -91,7 +96,7 @@ var PngMask = function(className, options) {
     return {node:results[0], dir:results[2]};
   }
 
-  function renderPolygon(element) {
+  function renderPaths(element) {
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("width", element.width+"px");
     svg.setAttribute("height", element.height+"px");
@@ -137,14 +142,13 @@ var PngMask = function(className, options) {
     return false;
   }
 
-  function createPolygon(element) {
+  function createPath(element) {
     self.imageVars[element.src] = {
       startingPath: "",
       pathIndex: 0,
       paths: []
     };
     createCanvas(element);
-
     // search image
     var searchPitch = Math.floor(element.height/(self.searchTolerance+1));
     for (var i = 1; i <= self.searchTolerance; i++) {
@@ -177,12 +181,11 @@ var PngMask = function(className, options) {
         horizontalNode.x++;
       }
     }
-
-    return renderPolygon(element);
+    return renderPaths(element);
   }
 
   // create promise for the resulted svg
-  return new Promise(function(resolve, reject) {
+  var pngMask = new Promise(function(resolve, reject) {
     var elements = document.getElementsByClassName(className);
     if (!elements.length) {
       return reject("cannot find class: "+className);
@@ -200,8 +203,11 @@ var PngMask = function(className, options) {
           function waitForImageToLoad(element, timeout) {
             setTimeout(function(){
               if (imgLoaded(element)) {
-                masksBySrc[element.src] = createPolygon(element);
-                console.log(element.src+" done!");
+                masksBySrc[element.src] = createPath(element);
+                if (self.debug.on) {
+                  self.debug.completeCount++;
+                  console.log(element.src+" mask calculated ("+self.debug.completeCount+" of "+Object.keys(masksBySrc).length+")");
+                }
                 return resolve(element.src);
               }
               waitForImageToLoad(element, 100);
@@ -225,4 +231,14 @@ var PngMask = function(className, options) {
       return resolve(masksBySrc);
     });
   });
+  // debug promise
+  if (self.debug.on) {
+    pngMask.then(function(data){
+      console.log("Complete:");
+      console.log(data);
+    },function(error){
+      console.log("Error: "+error);
+    });
+  }
+  return pngMask;
 };

@@ -16,8 +16,7 @@ path:hover {
 <img class="pokemon" src="./resources/images/square.png"> -->
 
 <img class="pokemon" src="./resources/images/007.png">
-<img class="pokemon" src="./resources/images/007.png">
-<img class="pokemon" src="./resources/images/007.png">
+
 
 
 
@@ -27,13 +26,11 @@ path:hover {
 <script>
 // class use!!!
 var masksOne = new PngMask('pokemon');
+// var masksOne = new PngMask('pokemon', {debug:true});
 // var masksTwo= new PngMask('pokemon-plus', {searchTolerance: 14});
 
 masksOne.then(function(data){
-  console.log("Success - "+JSON.stringify(data));
   // add event listeners here
-},function(error){
-  console.log("Error - "+error);
 });
 
 </script>
