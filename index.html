@@ -1,12 +1,12 @@
 <html>
 <head></head>
 <body>
-  <img class="pokemon" src="./resources/images/006.png">
+  <!-- <img class="pokemon" src="./resources/images/006.png"> -->
   <img class="pokemon" src="./resources/images/007.png">
-  <img class="pokemon" src="./resources/images/063.png">
-  <img class="pokemon-complex" src="./resources/images/092.png">
-  <img class="pokemon" src="./resources/images/093.png">
-  <img class="pokemon-plus" src="./resources/images/151.png">
+  <img class="pokemon" style="margin-left:-150px;" src="./resources/images/063.png">
+  <!-- <img class="pokemon-complex" src="./resources/images/092.png"> -->
+  <!-- <img class="pokemon" src="./resources/images/093.png"> -->
+  <!-- <img class="pokemon-plus" src="./resources/images/151.png"> -->
 
   <!-- <img class="pokemon" src="./resources/images/square1.png">
   <img class="pokemon" src="./resources/images/square.png"> -->
@@ -23,10 +23,10 @@
   <script type="text/javascript" src="resources/js/pngmask.js"></script>
   <script>
 
-  // var masksOne = new PngMask('pokemon');
+  // var masksZero = new PngMask('pokemon');
   var masksOne = new PngMask('pokemon', {debug:true});
-  var masksTwo= new PngMask('pokemon-plus', {debug:true, searchTolerance: 14});
-  var masksThree= new PngMask('pokemon-complex', {debug:true, searchTolerance: 14});
+  // var masksTwo= new PngMask('pokemon-plus', {debug:true, searchTolerance: 14});
+  // var masksThree= new PngMask('pokemon-complex', {debug:true, searchTolerance: 14});
 
   masksOne.then(function(data){
     // add event listeners here

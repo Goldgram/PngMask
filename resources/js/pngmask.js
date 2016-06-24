@@ -106,9 +106,25 @@ var PngMask = function(className, options) {
   }
 
   function renderPaths(element) {
+    var style = document.createElement("style");
+    style.setAttribute("id", "png-mask-style");
+    style.type = "text/css";
+    var css = "";
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    // add image attributes
+    for (var i = 0; i < element.attributes.length; i++) {
+      var key = element.attributes[i].nodeName;
+      var value = element.attributes[i].nodeValue;
+      if (key!=="src") {
+        svg.setAttribute(key, value);
+      } 
+    }
+    var oldSvgClass = svg.getAttribute("class");
+    var newSvgClass = "png-mask-svg"; 
+    svg.setAttribute("class", oldSvgClass ? newSvgClass+" "+oldSvgClass : newSvgClass);
     svg.setAttribute("width", element.width+"px");
     svg.setAttribute("height", element.height+"px");
+    css += ".png-mask-svg {pointer-events:none;}"
     svg.setAttribute("viewBox", "0 0 "+element.width+" "+element.height+"");
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
     var svgimg = document.createElementNS("http://www.w3.org/2000/svg", "image");
@@ -118,33 +134,27 @@ var PngMask = function(className, options) {
     svgimg.setAttribute("href", element.getAttribute("src"));
     svgimg.setAttribute("x", "0");
     svgimg.setAttribute("y", "0");
+    css += ".png-mask-image {pointer-events:none;}";
     svg.appendChild(svgimg);
     var pathD = "";
     for (var i = 0; i < self.imageVars[element.src].paths.length; i++) {
       pathD += self.imageVars[element.src].paths[i] + "Z ";
     }
     var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("class", "png-mask");
+    path.setAttribute("class", "png-mask-path");
     path.setAttribute("d", pathD);
     if (self.debug.on) {
       path.setAttribute("fill", generateRandomHexColor());
       path.setAttribute("fill-opacity", 0.75);
-      var style = document.createElement("style");
-      style.type = "text/css";
-      style.appendChild(document.createTextNode(".png-mask:hover {fill-opacity:0.25;}"));
-      document.head.appendChild(style);
+      css += ".png-mask-path:hover {fill-opacity:0.25;}";
     } else {
       path.setAttribute("fill", "transparent");
     }
-    path.setAttribute("style", "cursor:pointer;");
+    css += ".png-mask-path {cursor:pointer;pointer-events:auto;}";
     svg.appendChild(path);
-    // add image attributes
-    for (var i = 0; i < element.attributes.length; i++) {
-      var key = element.attributes[i].nodeName;
-      var value = element.attributes[i].nodeValue;
-      if (key!=="src") {
-        svg.setAttribute(key, value);
-      }
+    if (!document.getElementById("png-mask-style")) {
+      style.appendChild(document.createTextNode(css));
+      document.head.appendChild(style);
     }
     return svg;
   }
