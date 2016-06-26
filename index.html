@@ -1,12 +1,26 @@
 <html>
-<head></head>
+<head>
+  <style>
+  .pokemon {
+    border: 1px solid grey;
+    /*cursor: pointer;*/
+  }
+  .wesley:hover {
+    opacity:0.5;
+    cursor: pointer;
+  }
+  </style>
+</head>
 <body>
   <!-- <img class="pokemon" src="./resources/images/006.png"> -->
   <img class="pokemon" src="./resources/images/007.png">
-  <img class="pokemon" style="margin-left:-150px;" src="./resources/images/063.png">
-  <!-- <img class="pokemon-complex" src="./resources/images/092.png"> -->
+  <!-- <img class="pokemon" style="margin-left:-35px;" src="./resources/images/063.png"> -->
+
+  <!-- <img class="wesley" src="./resources/images/151.png"> -->
+  <!-- <img class="pokemon-plus" style="margin-left:-300px;" src="./resources/images/151.png"> -->
+  <!-- <img class="pokemon-complex"  src="./resources/images/092.png"> -->
+
   <!-- <img class="pokemon" src="./resources/images/093.png"> -->
-  <!-- <img class="pokemon-plus" src="./resources/images/151.png"> -->
 
   <!-- <img class="pokemon" src="./resources/images/square1.png">
   <img class="pokemon" src="./resources/images/square.png"> -->
@@ -24,13 +38,13 @@
   <script>
 
   // var masksZero = new PngMask('pokemon');
-  var masksOne = new PngMask('pokemon', {debug:true});
-  // var masksTwo= new PngMask('pokemon-plus', {debug:true, searchTolerance: 14});
+  var masksOne = new PngMask('pokemon', {debug:true, mappingTolerance:1});
+  // var masksTwo= new PngMask('pokemon-plus', {debug:true, searchTolerance: 3});
   // var masksThree= new PngMask('pokemon-complex', {debug:true, searchTolerance: 14});
 
-  masksOne.then(function(data){
-    // add event listeners here
-  });
+  // masksOne.then(function(data){
+  //   // add event listeners here
+  // });
 
   </script>
 </body>

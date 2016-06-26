@@ -20,7 +20,8 @@ var PngMask = function(className, options) {
     "left": {left:6, leftCorner:"bottomRight", leftString:"down", straight:7, straightCorner:"bottomLeft", rightCorner:"topLeft", rightString:"up"},
   };
 
-  this.mappingTolerance = options && options.mappingTolerance || 1;
+  this.multiplePaths = options && options.multiplePaths || false;
+  this.mappingTolerance = options && options.mappingTolerance || 2;
   this.alphaTolerance = options && options.alphaTolerance || 80;
   this.searchTolerance = options && options.searchTolerance || 1;
   this.replaceImage = options && options.replaceImage || true;
@@ -204,7 +205,9 @@ var PngMask = function(className, options) {
           }
           
           inverse = !inverse;
-          // break;
+          if (!self.multiplePaths) {
+            break;
+          }
         }
         horizontalNode.x++;
       }
@@ -280,3 +283,5 @@ var PngMask = function(className, options) {
   }
   return pngMask;
 };
+
+var pngMaskByImage;
