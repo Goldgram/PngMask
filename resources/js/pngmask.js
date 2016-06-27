@@ -1,17 +1,17 @@
 /**
  * PngMask Class
  */
-var PngMask = function(className, options) {
+var PngMask = function(elements, userOptions, overrideOptions) {
   var self = this;
   var directions = [
-    {x:-1,y:-1},
-    {x:0,y:-1},
-    {x:1,y:-1},
-    {x:1,y:0},
-    {x:1,y:1},
-    {x:0,y:1},
-    {x:-1,y:1},
-    {x:-1,y:0}
+    {x: -1,y: -1},
+    {x: 0,y: -1},
+    {x: 1,y: -1},
+    {x: 1,y: 0},
+    {x: 1,y: 1},
+    {x: 0,y: 1},
+    {x: -1,y: 1},
+    {x: -1,y: 0}
   ];
   var pathDirection = {
     "up": {left:0, leftCorner:"bottomLeft", leftString:"left", straight:1, straightCorner:"topLeft", rightCorner:"topRight", rightString:"right"},
@@ -20,17 +20,24 @@ var PngMask = function(className, options) {
     "left": {left:6, leftCorner:"bottomRight", leftString:"down", straight:7, straightCorner:"bottomLeft", rightCorner:"topLeft", rightString:"up"},
   };
 
-  this.multiplePaths = options && options.multiplePaths || false;
-  this.mappingTolerance = options && options.mappingTolerance || 2;
-  this.alphaTolerance = options && options.alphaTolerance || 80;
-  this.searchTolerance = options && options.searchTolerance || 1;
-  this.replaceImage = options && options.replaceImage || true;
-  this.debug = {
-    on: (options && options.debug || false),
-    completeCount: 0
+  this.multiplePaths = userOptions && userOptions.multiplePaths || false;
+  this.mappingTolerance = userOptions && userOptions.mappingTolerance || 2;
+  this.alphaTolerance = userOptions && userOptions.alphaTolerance || 80;
+  this.searchTolerance = userOptions && userOptions.searchTolerance || 1;
+  this.elementAttributes = userOptions && userOptions.elementAttributes || {};
+  if (userOptions && userOptions.replaceImage) {
+    this.replaceImage = true;
+  } else {
+    this.replaceImage = overrideOptions && overrideOptions.replaceImage || false;
   }
-    
+  this.debug = {
+    on: (userOptions && userOptions.debug || false),
+    completeCount: 0
+  };
+
   this.imageVars = {};
+  this.masksBySrc = {};
+
   
   function imgLoaded(element) {
     return element.complete && element.naturalHeight !== 0;
@@ -41,15 +48,15 @@ var PngMask = function(className, options) {
     canvas.width = element.width;
     canvas.height = element.height;
     canvas.getContext("2d").drawImage(element, 0, 0, element.width, element.height);
-    self.imageVars[element.src].canvasContext = canvas.getContext("2d");
+    self.imageVars[element.relativeSrc].canvasContext = canvas.getContext("2d");
   }
 
   function isSolidNode(element, node) {
-    var alpha = self.imageVars[element.src].canvasContext.getImageData(node.x, node.y, 1, 1).data[3];
+    var alpha = self.imageVars[element.relativeSrc].canvasContext.getImageData(node.x, node.y, 1, 1).data[3];
     return alpha > self.alphaTolerance;
   }
 
-  function getCornerString(node, cornerString, startOfPath) {
+  function getCornerString(node, cornerString) {
     switch (cornerString) {
       case "topLeft":
         return node.x+" "+node.y+" ";
@@ -69,14 +76,13 @@ var PngMask = function(className, options) {
   }
 
   function addToImagePath(element, pathString) {
-    self.imageVars[element.src].paths[self.imageVars[element.src].pathIndex] += pathString;
+    self.imageVars[element.relativeSrc].paths[self.imageVars[element.relativeSrc].pathIndex] += pathString;
   }
 
   function findNextNode(element, node, pathString) {
     var results;
     var dir = pathDirection[pathString];
-    var leftNode = getSiblingNode(node, dir.left);
-
+    
     var straightNode = getSiblingNode(node, dir.straight);
     if (!isSolidNode(element, straightNode)) {
       results = [node, dir.rightCorner, dir.rightString];
@@ -88,8 +94,8 @@ var PngMask = function(className, options) {
         results = [leftNode, dir.leftCorner, dir.leftString];
       }
     }
-    var newPath = getCornerString(results[0], results[1], false);
-    if (newPath === self.imageVars[element.src].startingPath) {
+    var newPath = getCornerString(results[0], results[1]);
+    if (newPath === self.imageVars[element.relativeSrc].startingPath) {
       return {status:"complete"};
     }
     addToImagePath(element, "L"+newPath);
@@ -118,14 +124,18 @@ var PngMask = function(className, options) {
       var value = element.attributes[i].nodeValue;
       if (key!=="src") {
         svg.setAttribute(key, value);
-      } 
+      }
     }
     var oldSvgClass = svg.getAttribute("class");
-    var newSvgClass = "png-mask-svg"; 
-    svg.setAttribute("class", oldSvgClass ? newSvgClass+" "+oldSvgClass : newSvgClass);
+    var newSvgClass = "png-mask-svg";
+    if (self.elementAttributes.class) {
+      newSvgClass += " "+self.elementAttributes.class;
+    }
+    svg.setAttribute("class", oldSvgClass ? oldSvgClass+" "+newSvgClass : newSvgClass);
+
     svg.setAttribute("width", element.width+"px");
     svg.setAttribute("height", element.height+"px");
-    css += ".png-mask-svg {pointer-events:none;}"
+    css += ".png-mask-svg {pointer-events:none;}";
     svg.setAttribute("viewBox", "0 0 "+element.width+" "+element.height+"");
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
     var svgimg = document.createElementNS("http://www.w3.org/2000/svg", "image");
@@ -138,8 +148,8 @@ var PngMask = function(className, options) {
     css += ".png-mask-image {pointer-events:none;}";
     svg.appendChild(svgimg);
     var pathD = "";
-    for (var i = 0; i < self.imageVars[element.src].paths.length; i++) {
-      pathD += self.imageVars[element.src].paths[i] + "Z ";
+    for (var j = 0; j < self.imageVars[element.relativeSrc].paths.length; j++) {
+      pathD += self.imageVars[element.relativeSrc].paths[j] + "Z ";
     }
     var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     path.setAttribute("class", "png-mask-path");
@@ -161,9 +171,8 @@ var PngMask = function(className, options) {
   }
 
   function pathExists(element, startPoint) {
-    var RemoveFirstLetter = startPoint.slice(1);
-    for (var i = 0; i < self.imageVars[element.src].paths.length; i++) {
-      var path = self.imageVars[element.src].paths[i]
+    for (var i = 0; i < self.imageVars[element.relativeSrc].paths.length; i++) {
+      var path = self.imageVars[element.relativeSrc].paths[i];
       if (path.indexOf(startPoint) > -1) {
         return true;
       }
@@ -172,7 +181,7 @@ var PngMask = function(className, options) {
   }
 
   function createPath(element) {
-    self.imageVars[element.src] = {
+    self.imageVars[element.relativeSrc] = {
       startingPath: "",
       pathIndex: 0,
       paths: []
@@ -190,18 +199,18 @@ var PngMask = function(className, options) {
           if (inverse) {
             startNode.x--;
           }
-          var startPoint = getCornerString(startNode, (inverse ? "topRight" : "bottomLeft"), true);
+          var startPoint = getCornerString(startNode, (inverse ? "topRight" : "bottomLeft"));
           if (!pathExists(element, startPoint)) {
-            self.imageVars[element.src].startingPath = startPoint;
-            self.imageVars[element.src].paths[self.imageVars[element.src].pathIndex] = "M"+startPoint;
-            addToImagePath(element, "L"+getCornerString(startNode, (inverse ? "bottomRight" : "topLeft"), false));
+            self.imageVars[element.relativeSrc].startingPath = startPoint;
+            self.imageVars[element.relativeSrc].paths[self.imageVars[element.relativeSrc].pathIndex] = "M"+startPoint;
+            addToImagePath(element, "L"+getCornerString(startNode, (inverse ? "bottomRight" : "topLeft")));
             
             var results = {node:startNode, dir:(inverse ? "down" : "up")};
             while (results.status !== "complete") {
               results = findNextNode(element, results.node, results.dir);
             }
-            self.imageVars[element.src].startingPath = "";
-            self.imageVars[element.src].pathIndex++;
+            self.imageVars[element.relativeSrc].startingPath = "";
+            self.imageVars[element.relativeSrc].pathIndex++;
           }
           
           inverse = !inverse;
@@ -212,21 +221,34 @@ var PngMask = function(className, options) {
         horizontalNode.x++;
       }
     }
-    return self.imageVars[element.src].paths.length > 0;
+    return self.imageVars[element.relativeSrc].paths.length > 0;
   }
 
   function isImage(element) {
     return element instanceof HTMLImageElement;
   }
 
+  function waitForImageToLoad(element, timeout) {
+    return new Promise(function(resolve, reject) {
+      setTimeout(function(){
+        if (imgLoaded(element)) {
+          if (!createPath(element)) {
+            return reject("image has no alpha above the tolerance: "+element);
+          }
+          self.masksBySrc[element.relativeSrc] = renderPaths(element);
+          if (self.debug.on) {
+            self.debug.completeCount++;
+            console.log(element.relativeSrc+" mask calculated ("+self.debug.completeCount+" of "+Object.keys(self.masksBySrc).length+")");
+          }
+          return resolve(element.relativeSrc);
+        }
+        return waitForImageToLoad(element, 100);
+      }, timeout);
+    });
+  }
+
   // create promise for the resulted svg
   var pngMask = new Promise(function(resolve, reject) {
-    var elements = document.getElementsByClassName(className);
-    if (!elements.length) {
-      return reject("cannot find class: "+className);
-    }
-
-    var masksBySrc = {};
     var promiseArray = [];
     for (var i = 0; i < elements.length; i++) {
       var imagePromise;
@@ -234,42 +256,28 @@ var PngMask = function(className, options) {
       if (!isImage(element)) {
         return reject("element is not an image: "+element);
       }
-      element.src = element.getAttribute("src");
-      if (!masksBySrc[element.src]) {
-        masksBySrc[element.src] = {};
-        imagePromise = new Promise(function(resolve, reject) {
-          function waitForImageToLoad(element, timeout) {
-            setTimeout(function(){
-              if (imgLoaded(element)) {
-                if (!createPath(element)) {
-                  return reject("image has no alpha above the tolerance: "+element);
-                }
-                masksBySrc[element.src] = renderPaths(element);
-                if (self.debug.on) {
-                  self.debug.completeCount++;
-                  console.log(element.src+" mask calculated ("+self.debug.completeCount+" of "+Object.keys(masksBySrc).length+")");
-                }
-                return resolve(element.src);
-              }
-              waitForImageToLoad(element, 100);
-            }, timeout);
-          }
-          waitForImageToLoad(element, 0);
-        });
+      element.relativeSrc = element.getAttribute("src");
+      if (!self.masksBySrc[element.relativeSrc]) {
+        self.masksBySrc[element.relativeSrc] = {};
+        imagePromise = waitForImageToLoad(element, 0);
       } else {
-        imagePromise = new Promise(function(resolve, reject) {
-          return resolve(element.src);
+        imagePromise = new Promise(function(resolve) {
+          return resolve(element.relativeSrc);
         });
       }
       promiseArray.push(imagePromise);
     }
     return Promise.all(promiseArray).then(function(values) {
-      for (var i = elements.length-1; i >= 0; i--) {
-        var mask = masksBySrc[values[i]].cloneNode(true);
-        var element = elements[i];
-        elements[i].parentNode.replaceChild(mask, element);
+      if (self.replaceImage) {
+        for (var i = elements.length-1; i >= 0; i--) {
+          var mask = self.masksBySrc[values[i]].cloneNode(true);
+          var element = elements[i];
+          elements[i].parentNode.replaceChild(mask, element);
+        }
       }
-      return resolve(masksBySrc);
+      return resolve(self.masksBySrc);
+    },function(error){
+      return reject(error);
     });
   });
   // debug promise
@@ -284,4 +292,19 @@ var PngMask = function(className, options) {
   return pngMask;
 };
 
-var pngMaskByImage;
+var pngMaskByImage = function(url, userOptions) {
+  var img = document.createElement('img');
+  img.src= url;
+  var elements = [img];
+  return new PngMask(elements, userOptions);
+};
+
+var pngMaskByClass = function(className, userOptions) {
+  return new Promise(function(resolve, reject) {
+    var elements = document.getElementsByClassName(className);
+    if (!elements.length) {
+      return reject("cannot find class: "+className);
+    }
+    return new PngMask(elements, userOptions, {replaceImage:true});
+  });
+};
