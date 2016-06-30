@@ -25,6 +25,7 @@ var PngMask = function(elements, userOptions, overrideOptions) {
   this.alphaTolerance = userOptions && userOptions.alphaTolerance || 80;
   this.searchTolerance = userOptions && userOptions.searchTolerance || 1;
   this.elementAttributes = userOptions && userOptions.elementAttributes || {};
+  this.maskOrShadow = userOptions && userOptions.mask ? "mask" : "shadow";
   if (userOptions && userOptions.replaceImage) {
     this.replaceImage = true;
   } else {
@@ -146,7 +147,7 @@ var PngMask = function(elements, userOptions, overrideOptions) {
     svgimg.setAttribute("x", "0");
     svgimg.setAttribute("y", "0");
     css += ".png-mask-image {pointer-events:none;}";
-    svg.appendChild(svgimg);
+
     var pathD = "";
     for (var j = 0; j < self.imageVars[element.relativeSrc].paths.length; j++) {
       pathD += self.imageVars[element.relativeSrc].paths[j] + "Z ";
@@ -162,7 +163,14 @@ var PngMask = function(elements, userOptions, overrideOptions) {
       path.setAttribute("fill", "transparent");
     }
     css += ".png-mask-path {cursor:pointer;pointer-events:auto;}";
-    svg.appendChild(path);
+    if (self.maskOrShadow === "mask") {
+      svg.appendChild(svgimg);
+      svg.appendChild(path);
+    } else if (self.maskOrShadow === "shadow") {
+      svg.appendChild(path);
+      svg.appendChild(svgimg);
+    }
+
     if (!document.getElementById("png-mask-style")) {
       style.appendChild(document.createTextNode(css));
       document.head.appendChild(style);
