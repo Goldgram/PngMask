@@ -18,6 +18,7 @@
 <body>
 
   <!-- <img class="pokemon" src="./resources/images/006.png"> -->
+  <img id="numberSeven" src="./resources/images/007.png">
   <!-- <img class="pokemon" src="./resources/images/007.png"> -->
   <!-- <img class="pokemon" style="margin-left:-35px;" src="./resources/images/063.png"> -->
 
@@ -48,17 +49,29 @@
   // var masksThree= new pngMaskByClass("pokemon-complex", {debug:true, searchTolerance: 14});
 
   // masksOne.then(function(data){
+  //   console.log("then?");
+  //   // add event listeners here
+  // },function(error){
+  //   console.log("error?: "+error);
   //   // add event listeners here
   // });
 
+  var masksSeven = new pngMaskById("numberSeven", {debug:true, mappingTolerance:1});
 
 
 
-  new pngMaskByImages(["resources/images/007.png","resources/images/093.png"], {debug:true, mappingTolerance:1, multiplePaths:true, mask:true}).then(function(imageElements){
-    for(var imageElement in imageElements) {
-      $("body").append(imageElements[imageElement]);
-    }
-  });
+
+  // new pngMaskByImages(["resources/images/007.png","resources/images/093.png"], {debug:true, mask:true}).then(function(imageElements){
+  //   for(var imageElement in imageElements) {
+  //     $("body").append(imageElements[imageElement]);
+  //   }
+  // });
+
+  // new pngMaskByImage(["resources/images/063.png"], {debug:true, mappingTolerance:1, mask:true}).then(function(imageElements){
+  //   for(var imageElement in imageElements) {
+  //     $("body").append(imageElements[imageElement]);
+  //   }
+  // });
 
   
   </script>

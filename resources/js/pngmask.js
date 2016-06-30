@@ -301,31 +301,46 @@ var PngMask = function(elements, userOptions, overrideOptions) {
 };
 
 var pngMaskByImage = function(url, userOptions) {
-  var img = document.createElement('img');
-  img.src= url;
-  var elements = [img];
-  return new PngMask(elements, userOptions);
+  return new Promise(function(resolve, reject) {
+    if (!url) {
+      return reject("cannot find image: "+url);
+    }
+    var img = document.createElement('img');
+    img.src= url;
+    var elements = [img];
+    var mask = new PngMask(elements, userOptions);
+    return resolve(mask);
+  });
 };
 
 var pngMaskByImages = function(urls, userOptions) {
-  var elements = [];
-  for (var i = 0; i < urls.length; i++) {
-    var img = document.createElement('img');
-    img.src= urls[i];
-    elements.push(img);
-  };
-  return new PngMask(elements, userOptions);
+  return new Promise(function(resolve, reject) {
+    if (!urls || !urls.length) {
+      return reject("cannot find images: "+urls);
+    }
+    var elements = [];
+    for (var i = 0; i < urls.length; i++) {
+      var img = document.createElement('img');
+      img.src= urls[i];
+      elements.push(img);
+    }
+    var mask = new PngMask(elements, userOptions);
+    return resolve(mask);
+  });
 };
 
-var pngMaskById = function(className, userOptions) {
-  // return new Promise(function(resolve, reject) {
-  //   var elements = document.getElementsByClassName(className);
-  //   if (!elements.length) {
-  //     return reject("cannot find class: "+className);
-  //   }
-  //   return new PngMask(elements, userOptions, {replaceImage:true});
-  // });
+var pngMaskById = function(id, userOptions) {
+  return new Promise(function(resolve, reject) {
+    var element = document.getElementById(id);
+    if (!element) {
+      return reject("cannot find id: "+id);
+    }
+    var elements = [element];
+    var mask = new PngMask(elements, userOptions, {replaceImage:true});
+    return resolve(mask);
+  });
 };
+
 
 var pngMaskByClass = function(className, userOptions) {
   return new Promise(function(resolve, reject) {
@@ -333,6 +348,7 @@ var pngMaskByClass = function(className, userOptions) {
     if (!elements.length) {
       return reject("cannot find class: "+className);
     }
-    return new PngMask(elements, userOptions, {replaceImage:true});
+    var mask = new PngMask(elements, userOptions, {replaceImage:true});
+    return resolve(mask);
   });
 };
