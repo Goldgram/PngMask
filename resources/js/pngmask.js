@@ -307,6 +307,26 @@ var pngMaskByImage = function(url, userOptions) {
   return new PngMask(elements, userOptions);
 };
 
+var pngMaskByImages = function(urls, userOptions) {
+  var elements = [];
+  for (var i = 0; i < urls.length; i++) {
+    var img = document.createElement('img');
+    img.src= urls[i];
+    elements.push(img);
+  };
+  return new PngMask(elements, userOptions);
+};
+
+var pngMaskById = function(className, userOptions) {
+  // return new Promise(function(resolve, reject) {
+  //   var elements = document.getElementsByClassName(className);
+  //   if (!elements.length) {
+  //     return reject("cannot find class: "+className);
+  //   }
+  //   return new PngMask(elements, userOptions, {replaceImage:true});
+  // });
+};
+
 var pngMaskByClass = function(className, userOptions) {
   return new Promise(function(resolve, reject) {
     var elements = document.getElementsByClassName(className);

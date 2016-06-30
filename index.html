@@ -54,7 +54,7 @@
 
 
 
-  new pngMaskByImage("resources/images/093.png", {mappingTolerance:1, multiplePaths:true}).then(function(imageElements){
+  new pngMaskByImages(["resources/images/007.png","resources/images/093.png"], {debug:true, mappingTolerance:1, multiplePaths:true, mask:true}).then(function(imageElements){
     for(var imageElement in imageElements) {
       $("body").append(imageElements[imageElement]);
     }
