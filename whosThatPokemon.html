@@ -3,8 +3,8 @@
   <style>
   #pokemonContainer .pokemon .png-mask-path {
     cursor: pointer;
-    /*fill: black;*/
-    /*fill-opacity: 0.50;*/
+    fill: black;
+    fill-opacity: 0.9;
   }
   #pokemonContainer .pokemon .png-mask-path:hover {
     fill-opacity: 0;
@@ -177,21 +177,21 @@
     function getRandomInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1) + min);
     }
-    // var pokemonIndex = getRandomInt(1, allPokemon.length)-1;
-    // var pokemon = allPokemon[pokemonIndex];
-    var max = 5;
-    for (var i = max-5; i < max; i++) {
-      var pokemon = allPokemon[i];
+    var pokemonIndex = getRandomInt(1, allPokemon.length)-1;
+    var pokemon = allPokemon[pokemonIndex];
+    // var max = 5;
+    // for (var i = max-5; i < max; i++) {
+    //   var pokemon = allPokemon[i];
       
       imageUrl = "resources/images/pokemon/"+pokemon.number+".png";
-      new pngMaskByImage(imageUrl, {debug:true, mappingTolerance:1, multiplePaths:true, elementAttributes:{class:"pokemon"}}).then(function(imageElements){
+      new pngMaskByImage(imageUrl, {debug:true, mappingTolerance:1, multiplePaths:true, mask:true, elementAttributes:{class:"pokemon"}}).then(function(imageElements){
         for (var i in imageElements) {
           $("#pokemonContainer").append(imageElements[i]);
         };
       });
 
     //   // Things[i]
-    }
+    // }
   
   </script>
 </body>
