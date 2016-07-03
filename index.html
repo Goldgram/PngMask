@@ -18,8 +18,11 @@
 <body>
 
   <!-- <img class="pokemon" src="./resources/images/006.png"> -->
-  <img id="numberSeven" src="./resources/images/007.png">
-  <!-- <img class="pokemon" src="./resources/images/007.png"> -->
+  <!-- <img id="numberSeven" src="./resources/images/007.png"> -->
+  <!-- <img class="pokemon" src="resources/images/007.png"> -->
+  <!-- <img class="pokemon" src="./resources/images/063.png"> -->
+
+  <img id="pokemonSeven" src="resources/images/007.png">
   <!-- <img class="pokemon" style="margin-left:-35px;" src="./resources/images/063.png"> -->
 
   <!-- <img class="wesley" src="./resources/images/151.png"> -->
@@ -35,8 +38,7 @@
   <img class="pokemon" src="./resources/images/007.png">
   <img class="pokemon" src="./resources/images/007.png"> -->
 
-
-
+  <h1 class="pokemon" >stuff</h1>
 
 
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -56,7 +58,7 @@
   //   // add event listeners here
   // });
 
-  var masksSeven = new pngMaskById("numberSeven", {debug:true, mappingTolerance:1});
+  // var masksSeven = new pngMaskById("numberSeven", {debug:true, mappingTolerance:1});
 
 
 
@@ -72,6 +74,15 @@
   //     $("body").append(imageElements[imageElement]);
   //   }
   // });
+
+
+  $(".pokemon").pngMask().then(function(imageElements){
+   console.log(imageElements);
+  }, function(error){
+   console.log(error);
+  });
+  $("#pokemonSeven").pngMask({debug:true, mappingTolerance:1});
+
 
   
   </script>

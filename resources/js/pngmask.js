@@ -305,7 +305,7 @@ var pngMaskByImage = function(url, userOptions) {
     if (!url) {
       return reject("cannot find image: "+url);
     }
-    var img = document.createElement('img');
+    var img = document.createElement("img");
     img.src= url;
     var elements = [img];
     var mask = new PngMask(elements, userOptions);
@@ -320,7 +320,7 @@ var pngMaskByImages = function(urls, userOptions) {
     }
     var elements = [];
     for (var i = 0; i < urls.length; i++) {
-      var img = document.createElement('img');
+      var img = document.createElement("img");
       img.src= urls[i];
       elements.push(img);
     }
@@ -352,3 +352,23 @@ var pngMaskByClass = function(className, userOptions) {
     return resolve(mask);
   });
 };
+
+// jQuery Support
+if (typeof jQuery !== "undefined") {
+  (function($) {
+    $.fn.pngMask = function(userOptions) {
+      if (this.length) {
+        self = this;
+        var mask = new PngMask(self, userOptions, {replaceImage:true});
+        return Promise.resolve(mask);
+      } else {
+        return Promise.reject("elements are undefined");
+      }
+    };
+  }(jQuery));
+}
+
+
+
+
+
