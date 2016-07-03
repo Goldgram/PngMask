@@ -1,7 +1,7 @@
 /**
  * PngMask Class
  */
-var PngMask = function(elements, userOptions, overrideOptions) {
+var _PngMask = function(elements, userOptions, overrideOptions) {
   var self = this;
   var directions = [
     {x: -1,y: -1},
@@ -300,66 +300,71 @@ var PngMask = function(elements, userOptions, overrideOptions) {
   return pngMask;
 };
 
+
+
+
+// endpoints
 var pngMaskByImage = function(url, userOptions) {
-  return new Promise(function(resolve, reject) {
-    if (!url) {
-      return reject("cannot find image: "+url);
-    }
-    var img = document.createElement("img");
-    img.src= url;
-    var elements = [img];
-    var mask = new PngMask(elements, userOptions);
-    return resolve(mask);
-  });
+  if (!url) {
+    return Promise.reject("cannot find image: "+url);
+  }
+  var img = document.createElement("img");
+  img.src= url;
+  var elements = [img];
+  var mask = new _PngMask(elements, userOptions);
+  return Promise.resolve(mask);
 };
 
 var pngMaskByImages = function(urls, userOptions) {
-  return new Promise(function(resolve, reject) {
-    if (!urls || !urls.length) {
-      return reject("cannot find images: "+urls);
-    }
-    var elements = [];
-    for (var i = 0; i < urls.length; i++) {
-      var img = document.createElement("img");
-      img.src= urls[i];
-      elements.push(img);
-    }
-    var mask = new PngMask(elements, userOptions);
-    return resolve(mask);
-  });
+  if (!urls || !urls.length) {
+    return Promise.reject("cannot find images: "+urls);
+  }
+  var elements = [];
+  for (var i = 0; i < urls.length; i++) {
+    var img = document.createElement("img");
+    img.src= urls[i];
+    elements.push(img);
+  }
+  var mask = new _PngMask(elements, userOptions);
+  return Promise.resolve(mask);
 };
 
 var pngMaskById = function(id, userOptions) {
-  return new Promise(function(resolve, reject) {
-    var element = document.getElementById(id);
-    if (!element) {
-      return reject("cannot find id: "+id);
-    }
-    var elements = [element];
-    var mask = new PngMask(elements, userOptions, {replaceImage:true});
-    return resolve(mask);
-  });
+  var element = document.getElementById(id);
+  if (!element) {
+    return Promise.reject("cannot find id: "+id);
+  }
+  var elements = [element];
+  var mask = new _PngMask(elements, userOptions, {replaceImage:true});
+  return Promise.resolve(mask);
 };
 
 
 var pngMaskByClass = function(className, userOptions) {
-  return new Promise(function(resolve, reject) {
-    var elements = document.getElementsByClassName(className);
-    if (!elements.length) {
-      return reject("cannot find class: "+className);
-    }
-    var mask = new PngMask(elements, userOptions, {replaceImage:true});
-    return resolve(mask);
-  });
+  var elements = document.getElementsByClassName(className);
+  if (!elements.length) {
+    return Promise.reject("cannot find class: "+className);
+  }
+  var mask = new _PngMask(elements, userOptions, {replaceImage:true});
+  return Promise.resolve(mask);
 };
+
+var pngMaskByElement = function(element, userOptions) {
+
+};
+
+var pngMaskByElements = function(elements, userOptions) {
+
+};
+
+
 
 // jQuery Support
 if (typeof jQuery !== "undefined") {
   (function($) {
     $.fn.pngMask = function(userOptions) {
       if (this.length) {
-        self = this;
-        var mask = new PngMask(self, userOptions, {replaceImage:true});
+        var mask = new _PngMask(this, userOptions, {replaceImage:true});
         return Promise.resolve(mask);
       } else {
         return Promise.reject("elements are undefined");
