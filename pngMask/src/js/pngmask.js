@@ -304,7 +304,7 @@ var _PngMask = function(elements, userOptions, overrideOptions) {
 
 
 // endpoints
-var pngMaskByImage = function(url, userOptions) {
+var pngMaskByUrl = function(url, userOptions) {
   if (!url) {
     return Promise.reject("cannot find image: "+url);
   }
@@ -315,7 +315,7 @@ var pngMaskByImage = function(url, userOptions) {
   return Promise.resolve(mask);
 };
 
-var pngMaskByImages = function(urls, userOptions) {
+var pngMaskByUrls = function(urls, userOptions) {
   if (!urls || !urls.length) {
     return Promise.reject("cannot find images: "+urls);
   }
