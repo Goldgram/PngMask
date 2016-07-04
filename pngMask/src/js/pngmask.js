@@ -358,7 +358,6 @@ var pngMaskByElements = function(elements, userOptions) {
 };
 
 
-
 // jQuery Support
 if (typeof jQuery !== "undefined") {
   (function($) {
