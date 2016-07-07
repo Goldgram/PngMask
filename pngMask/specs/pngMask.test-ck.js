@@ -1,1 +1,0 @@
-describe("pngMask Tests",function(){var e,t="";beforeEach(function(){e=document.createElement("img");e.src=t});afterEach(function(){e=null});it("performance test 1",function(){expect(!0).toBe(!0)})});

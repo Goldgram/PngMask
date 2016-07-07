@@ -250,7 +250,7 @@ var _PngMask = function(elements, userOptions, overrideOptions) {
           }
           return resolve(element.relativeSrc);
         }
-        return waitForImageToLoad(element, 100);
+        return resolve(waitForImageToLoad(element, 100));
       }, timeout);
     });
   }

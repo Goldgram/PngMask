@@ -1,22 +1,52 @@
 describe("pngMask Tests", function() {
   var imageElement;
-  var url = "";
+  var url0 = "src/test-images/007.png";
+  // var url1 = "src/test-images/063.png";
+  // var url2 = "src/test-images/092.png";
+  // var class1 = "pokemon"
+
   
-  beforeEach(function() {
+
+  it("performance test 1", function(done) {
     imageElement = document.createElement("img");
-    imageElement.src= url;
-  });
+    imageElement.src= url0;
+    var elements = [imageElement];
 
-  afterEach(function() {
-    imageElement = null;
+    var testTimeStart = new Date();
+    var testTimeEnd;
+    new _PngMask(elements).then(function(result) {
+      testTimeEnd = new Date();
+      var timeTaken = testTimeEnd.getTime() - testTimeStart.getTime();
+      expect(timeTaken).toBeLessThan(600);
+      // other expects
+      done();
+    });
   });
 
   
-  it("performance test 1", function() {
-    // var promise = new pngMaskByClass("pokemon");
-    
-    expect(true).toBe(true);
-  });
+  // beforeEach(function() {
+  //   imageElement = document.createElement("img");
+  //   imageElement.src= url0;
+  //   imageElement.className = class1;
+  //   document.body.appendChild(imageElement);
+  // });
+
+  // afterEach(function() {
+  //   imageElement = null;
+  //   imageElement1 = null;
+  //   imageElement2 = null;
+  // });
+  // it("performance test byClass", function(done) {
+  //   var testTimeStart = new Date();
+  //   var testTimeEnd;
+  //   new pngMaskByClass("pokemon").then(function(result) {
+  //     testTimeEnd = new Date();
+  //     var timeTaken = testTimeEnd.getTime() - testTimeStart.getTime();
+  //     expect(timeTaken).toBeLessThan(1000);
+  //     // other expects
+  //     done();
+  //   });
+  // });
 
   // it("ByImageUrl (single)", function() {
   //   expect(true).toBe(true);
