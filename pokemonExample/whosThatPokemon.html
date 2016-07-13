@@ -16,8 +16,8 @@
     
   </div>
   
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-  <!--<script type="text/javascript" src="./../pngMask/src/js/pngmask.min.js"></script> -->
+  <!--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script type="text/javascript" src="./../pngMask/src/js/pngmask.min.js"></script> -->
   <script type="text/javascript" src="./../pngMask/src/js/pngmask.js"></script>
   <script>
 
@@ -26,7 +26,7 @@
       {number:"002", name:"Ivysaur"},
       {number:"003", name:"Venusaur", multiplePaths:true, searchTolerance:2},
       {number:"004", name:"Charmander"},
-      {number:"005", name:"Charmeleon", multiplePaths:true, searchTolerance:8},
+      {number:"005", name:"Charmeleon", multiplePaths:true, additionalSearchRows:[320]},
       {number:"006", name:"Charizard", multiplePaths:true},
       {number:"007", name:"Squirtle"},
       {number:"008", name:"Wartortle"},
@@ -37,17 +37,17 @@
       {number:"013", name:"Weedle"},
       {number:"014", name:"Kakuna"},
       {number:"015", name:"Beedrill"},
-      {number:"016", name:"Pidgey", multiplePaths:true, additionalSearchRows:[385,403]},//searchTolerance would be 33 to get the tiny space that 403 captures, 
+      {number:"016", name:"Pidgey", multiplePaths:true, additionalSearchRows:[385,403]},
       {number:"017", name:"Pidgeotto", multiplePaths:true, searchTolerance:2},
-      {number:"018", name:"Pidgeot", multiplePaths:true, searchTolerance:10},
-      {number:"019", name:"Rattata"},
+      {number:"018", name:"Pidgeot", multiplePaths:true, additionalSearchRows:[168,200]},
+      {number:"019", name:"Rattata", multiplePaths:true, additionalSearchRows:[351]},
       {number:"020", name:"Raticate"},
       {number:"021", name:"Spearow"},
       {number:"022", name:"Fearow"},
       {number:"023", name:"Ekans"},
       {number:"024", name:"Arbok"},
       {number:"025", name:"Pikachu"},
-      {number:"026", name:"Raichu"},
+      {number:"026", name:"Raichu", multiplePaths:true, searchTolerance:3},
       {number:"027", name:"Sandshrew"},
       {number:"028", name:"Sandslash"},
       {number:"029", name:"Nidoran♀"},
@@ -55,11 +55,11 @@
       {number:"031", name:"Nidoqueen"},
       {number:"032", name:"Nidoran♂"},
       {number:"033", name:"Nidorino"},
-      {number:"034", name:"Nidoking"},
+      {number:"034", name:"Nidoking", multiplePaths:true, additionalSearchRows:[220,250]},
       {number:"035", name:"Clefairy"},
       {number:"036", name:"Clefable"},
       {number:"037", name:"Vulpix"},
-      {number:"038", name:"Ninetales"},
+      {number:"038", name:"Ninetales", multiplePaths:true, additionalSearchRows:[170,305,380]},
       {number:"039", name:"Jigglypuff"},
       {number:"040", name:"Wigglytuff"},
       {number:"041", name:"Zubat"},
@@ -68,38 +68,38 @@
       {number:"044", name:"Gloom"},
       {number:"045", name:"Vileplume"},
       {number:"046", name:"Paras"},
-      {number:"047", name:"Parasect"},
+      {number:"047", name:"Parasect", multiplePaths:true, additionalSearchRows:[282]},
       {number:"048", name:"Venonat"},
       {number:"049", name:"Venomoth"},
       {number:"050", name:"Diglett"},
       {number:"051", name:"Dugtrio"},
-      {number:"052", name:"Meowth"},
-      {number:"053", name:"Persian"},
+      {number:"052", name:"Meowth", multiplePaths:true, additionalSearchRows:[140,180,208]},
+      {number:"053", name:"Persian", multiplePaths:true, searchTolerance:2},
       {number:"054", name:"Psyduck"},
-      {number:"055", name:"Golduck"},
+      {number:"055", name:"Golduck", multiplePaths:true, additionalSearchRows:[204]},
       {number:"056", name:"Mankey"},
-      {number:"057", name:"Primeape"},
+      {number:"057", name:"Primeape", multiplePaths:true, additionalSearchRows:[110,220,330]},
       {number:"058", name:"Growlithe"},
-      {number:"059", name:"Arcanine"},
-      {number:"060", name:"Poliwag"},
+      {number:"059", name:"Arcanine", multiplePaths:true, additionalSearchRows:[210,362]},
+      {number:"060", name:"Poliwag", multiplePaths:true, additionalSearchRows:[300]},
       {number:"061", name:"Poliwhirl"},
       {number:"062", name:"Poliwrath"},
       {number:"063", name:"Abra"},
-      {number:"064", name:"Kadabra"},
-      {number:"065", name:"Alakazam"},
+      {number:"064", name:"Kadabra", multiplePaths:true, additionalSearchRows:[140]},
+      {number:"065", name:"Alakazam", multiplePaths:true, additionalSearchRows:[269]},
       {number:"066", name:"Machop"},
-      {number:"067", name:"Machoke"},
+      {number:"067", name:"Machoke", multiplePaths:true, additionalSearchRows:[200]},
       {number:"068", name:"Machamp"},
-      {number:"069", name:"Bellsprout"},
+      {number:"069", name:"Bellsprout", multiplePaths:true, searchTolerance:2},
       {number:"070", name:"Weepinbell"},
-      {number:"071", name:"Victreebel"},
+      {number:"071", name:"Victreebel", multiplePaths:true},
       {number:"072", name:"Tentacool"},
-      {number:"073", name:"Tentacruel"},
+      {number:"073", name:"Tentacruel", multiplePaths:true, additionalSearchRows:[252,267,293,330]},
       {number:"074", name:"Geodude"},
       {number:"075", name:"Graveler"},
       {number:"076", name:"Golem"},
-      {number:"077", name:"Ponyta"},
-      {number:"078", name:"Rapidash"},
+      {number:"077", name:"Ponyta", multiplePaths:true, additionalSearchRows:[260,370]},
+      {number:"078", name:"Rapidash", multiplePaths:true, searchTolerance:2},
       {number:"079", name:"Slowpoke"},
       {number:"080", name:"Slowbro"},
       {number:"081", name:"Magnemite"},
@@ -180,8 +180,8 @@
     }
     var pokemonIndex = getRandomInt(1, allPokemon.length)-1;
     var pokemon = allPokemon[pokemonIndex];
-    var start = 16;
-    for (var i = start-1; i < start+0; i++) {
+    var start = 81;
+    for (var i = start-1; i < start+3; i++) {
       var pokemon = allPokemon[i];
       
       imageUrl = "resources/images/pokemon/"+pokemon.number+".png";
@@ -191,11 +191,12 @@
         multiplePaths: pokemon.multiplePaths,
         searchTolerance: pokemon.searchTolerance,
         additionalSearchRows: pokemon.additionalSearchRows,
+        alphaTolerance: pokemon.alphaTolerance,
         mask: true,
         elementAttributes: {class:"pokemon"}
       }).then(function(imageElements){
         for (var i in imageElements) {
-          $("#pokemonContainer").append(imageElements[i]);
+          document.getElementById("pokemonContainer").appendChild(imageElements[i]);
         };
       });
 
