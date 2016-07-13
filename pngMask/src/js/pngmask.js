@@ -24,6 +24,9 @@ var _PngMask = function(elements, userOptions, overrideOptions) {
   this.mappingTolerance = userOptions && userOptions.mappingTolerance || 2;
   this.alphaTolerance = userOptions && userOptions.alphaTolerance || 80;
   this.searchTolerance = userOptions && userOptions.searchTolerance || 1;
+  this.additionalSearchRows = userOptions && Array.isArray(userOptions.additionalSearchRows) && userOptions.additionalSearchRows || [];
+
+
   this.elementAttributes = userOptions && userOptions.elementAttributes || {};
   this.maskOrShadow = userOptions && userOptions.mask ? "mask" : "shadow";
   if (userOptions && userOptions.replaceImage) {
@@ -188,6 +191,37 @@ var _PngMask = function(elements, userOptions, overrideOptions) {
     return false;
   }
 
+  function searchImagePixelRow(element, horizontalNode) {
+    var inverse = false;
+    while (horizontalNode.x < element.width) {
+      if (isSolidNode(element, horizontalNode)!==inverse) {
+        var startNode = horizontalNode;
+        if (inverse) {
+          startNode.x--;
+        }
+        var startPoint = getCornerString(startNode, (inverse ? "topRight" : "bottomLeft"));
+        if (!pathExists(element, startPoint)) {
+          self.imageVars[element.relativeSrc].startingPath = startPoint;
+          self.imageVars[element.relativeSrc].paths[self.imageVars[element.relativeSrc].pathIndex] = "M"+startPoint;
+          addToImagePath(element, "L"+getCornerString(startNode, (inverse ? "bottomRight" : "topLeft")));
+          
+          var results = {node:startNode, dir:(inverse ? "down" : "up")};
+          while (results.status !== "complete") {
+            results = findNextNode(element, results.node, results.dir);
+          }
+          self.imageVars[element.relativeSrc].startingPath = "";
+          self.imageVars[element.relativeSrc].pathIndex++;
+        }
+        
+        inverse = !inverse;
+        if (!self.multiplePaths) {
+          break;
+        }
+      }
+      horizontalNode.x++;
+    }
+  }
+
   function createPath(element) {
     self.imageVars[element.relativeSrc] = {
       startingPath: "",
@@ -199,37 +233,25 @@ var _PngMask = function(elements, userOptions, overrideOptions) {
     var searchPitch = Math.floor(element.height/(self.searchTolerance+1));
     for (var i = 1; i <= self.searchTolerance; i++) {
       var yAxis = i*searchPitch;
-      var inverse = false;
       var horizontalNode = {x:0, y:yAxis};
-      while (horizontalNode.x < element.width) {
-        if (isSolidNode(element, horizontalNode)!==inverse) {
-          var startNode = horizontalNode;
-          if (inverse) {
-            startNode.x--;
-          }
-          var startPoint = getCornerString(startNode, (inverse ? "topRight" : "bottomLeft"));
-          if (!pathExists(element, startPoint)) {
-            self.imageVars[element.relativeSrc].startingPath = startPoint;
-            self.imageVars[element.relativeSrc].paths[self.imageVars[element.relativeSrc].pathIndex] = "M"+startPoint;
-            addToImagePath(element, "L"+getCornerString(startNode, (inverse ? "bottomRight" : "topLeft")));
-            
-            var results = {node:startNode, dir:(inverse ? "down" : "up")};
-            while (results.status !== "complete") {
-              results = findNextNode(element, results.node, results.dir);
-            }
-            self.imageVars[element.relativeSrc].startingPath = "";
-            self.imageVars[element.relativeSrc].pathIndex++;
-          }
-          
-          inverse = !inverse;
-          if (!self.multiplePaths) {
-            break;
-          }
+      searchImagePixelRow(element, horizontalNode)
+    }
+    if (self.additionalSearchRows.length) {
+      for (var i = 0; i < self.additionalSearchRows.length; i++) {
+        var rowInt = self.additionalSearchRows[i];
+        if (rowInt !== parseInt(rowInt, 10)) {
+          return {pass:false, data:"additionalSearchRows is not a number: "+rowInt};
+        } else if (rowInt > element.width) {
+          return {pass:false, data:"additionalSearchRows row is out of bounds: "+rowInt};
         }
-        horizontalNode.x++;
+        var horizontalNode = {x:0, y:rowInt};
+        searchImagePixelRow(element, horizontalNode);
       }
     }
-    return self.imageVars[element.relativeSrc].paths.length > 0;
+    if (self.imageVars[element.relativeSrc].paths.length) {
+      return {pass:true, data:"success"};
+    }
+    return {pass:false, data:"image has no alpha above the tolerance: "+element};
   }
 
   function isImage(element) {
@@ -240,8 +262,9 @@ var _PngMask = function(elements, userOptions, overrideOptions) {
     return new Promise(function(resolve, reject) {
       setTimeout(function(){
         if (imgLoaded(element)) {
-          if (!createPath(element)) {
-            return reject("image has no alpha above the tolerance: "+element);
+          var createPathResult = createPath(element);
+          if (!createPathResult.pass) {
+            return reject(createPathResult.data);
           }
           self.masksBySrc[element.relativeSrc] = renderPaths(element);
           if (self.debug.on) {

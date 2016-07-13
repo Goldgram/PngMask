@@ -17,7 +17,8 @@
   </div>
   
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-  <script type="text/javascript" src="./../pngMask/src/js/pngmask.min.js"></script>
+  <!--<script type="text/javascript" src="./../pngMask/src/js/pngmask.min.js"></script> -->
+  <script type="text/javascript" src="./../pngMask/src/js/pngmask.js"></script>
   <script>
 
     var allPokemon = [
@@ -36,7 +37,7 @@
       {number:"013", name:"Weedle"},
       {number:"014", name:"Kakuna"},
       {number:"015", name:"Beedrill"},
-      {number:"016", name:"Pidgey", multiplePaths:true, searchTolerance:4},//33 with tiny space
+      {number:"016", name:"Pidgey", multiplePaths:true, additionalSearchRows:[385,403]},//searchTolerance would be 33 to get the tiny space that 403 captures, 
       {number:"017", name:"Pidgeotto", multiplePaths:true, searchTolerance:2},
       {number:"018", name:"Pidgeot", multiplePaths:true, searchTolerance:10},
       {number:"019", name:"Rattata"},
@@ -185,12 +186,13 @@
       
       imageUrl = "resources/images/pokemon/"+pokemon.number+".png";
       new pngMaskByUrl(imageUrl, {
-        debug:true,
-        mappingTolerance:1,
-        multiplePaths:pokemon.multiplePaths,
-        searchTolerance:pokemon.searchTolerance,
-        mask:true,
-        elementAttributes:{class:"pokemon"}
+        debug: true,
+        mappingTolerance: 1,
+        multiplePaths: pokemon.multiplePaths,
+        searchTolerance: pokemon.searchTolerance,
+        additionalSearchRows: pokemon.additionalSearchRows,
+        mask: true,
+        elementAttributes: {class:"pokemon"}
       }).then(function(imageElements){
         for (var i in imageElements) {
           $("#pokemonContainer").append(imageElements[i]);
