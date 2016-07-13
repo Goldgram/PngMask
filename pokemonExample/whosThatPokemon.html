@@ -3,8 +3,8 @@
   <style>
   #pokemonContainer .pokemon .png-mask-path {
     cursor: pointer;
-    /*fill: black;
-    fill-opacity: 0.95;*/
+    fill: black;
+    fill-opacity: 0.95;
   }
   #pokemonContainer .pokemon .png-mask-path:hover {
     fill-opacity: 0;
@@ -104,34 +104,34 @@
       {number:"080", name:"Slowbro"},
       {number:"081", name:"Magnemite"},
       {number:"082", name:"Magneton"},
-      {number:"083", name:"Farfetch'd"},
-      {number:"084", name:"Doduo"},
-      {number:"085", name:"Dodrio"},
+      {number:"083", name:"Farfetch'd", multiplePaths:true, additionalSearchRows:[175,375]},
+      {number:"084", name:"Doduo", multiplePaths:true, additionalSearchRows:[340]},
+      {number:"085", name:"Dodrio", multiplePaths:true, additionalSearchRows:[61,100,116,160]},
       {number:"086", name:"Seel"},
       {number:"087", name:"Dewgong"},
       {number:"088", name:"Grimer"},
       {number:"089", name:"Muk"},
       {number:"090", name:"Shellder"},
       {number:"091", name:"Cloyster"},
-      {number:"092", name:"Gastly"},
-      {number:"093", name:"Haunter"},
+      {number:"092", name:"Gastly", multiplePaths:true, additionalSearchRows:[38,158,208,408,434]},
+      {number:"093", name:"Haunter", multiplePaths:true},
       {number:"094", name:"Gengar"},
       {number:"095", name:"Onix"},
       {number:"096", name:"Drowzee"},
-      {number:"097", name:"Hypno"},
-      {number:"098", name:"Krabby"},
-      {number:"099", name:"Kingler"},
+      {number:"097", name:"Hypno", multiplePaths:true, additionalSearchRows:[225]},
+      {number:"098", name:"Krabby", multiplePaths:true, additionalSearchRows:[287,302,314]},
+      {number:"099", name:"Kingler", multiplePaths:true, additionalSearchRows:[260,309,322]},
       {number:"100", name:"Voltorb"},
       {number:"101", name:"Electrode"},
       {number:"102", name:"Exeggcute"},
       {number:"103", name:"Exeggutor"},
       {number:"104", name:"Cubone"},
       {number:"105", name:"Marowak"},
-      {number:"106", name:"Hitmonlee"},
+      {number:"106", name:"Hitmonlee", multiplePaths:true, additionalSearchRows:[170]},
       {number:"107", name:"Hitmonchan"},
       {number:"108", name:"Lickitung"},
-      {number:"109", name:"Koffing"},
-      {number:"110", name:"Weezing"},
+      {number:"109", name:"Koffing", multiplePaths:true, additionalSearchRows:[100,200,230,390,408]},
+      {number:"110", name:"Weezing", multiplePaths:true, additionalSearchRows:[75,125,200,270,360,384]},
       {number:"111", name:"Rhyhorn"},
       {number:"112", name:"Rhydon"},
       {number:"113", name:"Chansey"},
@@ -139,40 +139,40 @@
       {number:"115", name:"Kangaskhan"},
       {number:"116", name:"Horsea"},
       {number:"117", name:"Seadra"},
-      {number:"118", name:"Goldeen"},
+      {number:"118", name:"Goldeen", multiplePaths:true, additionalSearchRows:[270]},
       {number:"119", name:"Seaking"},
       {number:"120", name:"Staryu"},
       {number:"121", name:"Starmie"},
-      {number:"122", name:"Mr. Mime"},
-      {number:"123", name:"Scyther"},
+      {number:"122", name:"Mr. Mime", multiplePaths:true, additionalSearchRows:[96,146,396,403]},
+      {number:"123", name:"Scyther", multiplePaths:true, additionalSearchRows:[148,270,340]},
       {number:"124", name:"Jynx"},
-      {number:"125", name:"Electabuzz"},
-      {number:"126", name:"Magmar"},
+      {number:"125", name:"Electabuzz", multiplePaths:true, additionalSearchRows:[90,136,360]},
+      {number:"126", name:"Magmar", multiplePaths:true, additionalSearchRows:[244,249]},
       {number:"127", name:"Pinsir"},
       {number:"128", name:"Tauros"},
-      {number:"129", name:"Magikarp"},
-      {number:"130", name:"Gyarados"},
+      {number:"129", name:"Magikarp", multiplePaths:true, additionalSearchRows:[335]},
+      {number:"130", name:"Gyarados", multiplePaths:true, additionalSearchRows:[210]},
       {number:"131", name:"Lapras"},
       {number:"132", name:"Ditto"},
       {number:"133", name:"Eevee"},
       {number:"134", name:"Vaporeon"},
       {number:"135", name:"Jolteon"},
-      {number:"136", name:"Flareon"},
+      {number:"136", name:"Flareon", multiplePaths:true, additionalSearchRows:[192]},
       {number:"137", name:"Porygon"},
       {number:"138", name:"Omanyte"},
       {number:"139", name:"Omastar"},
-      {number:"140", name:"Kabuto"},
-      {number:"141", name:"Kabutops"},
-      {number:"142", name:"Aerodactyl"},
+      {number:"140", name:"Kabuto", multiplePaths:true, additionalSearchRows:[335,355]},
+      {number:"141", name:"Kabutops", multiplePaths:true, additionalSearchRows:[320]},
+      {number:"142", name:"Aerodactyl", multiplePaths:true, additionalSearchRows:[220]},
       {number:"143", name:"Snorlax"},
-      {number:"144", name:"Articuno"},
-      {number:"145", name:"Zapdos"},
-      {number:"146", name:"Moltres"},
+      {number:"144", name:"Articuno", multiplePaths:true, searchTolerance:2},
+      {number:"145", name:"Zapdos", multiplePaths:true, additionalSearchRows:[250,281]},
+      {number:"146", name:"Moltres", multiplePaths:true, additionalSearchRows:[252,278]},
       {number:"147", name:"Dratini"},
       {number:"148", name:"Dragonair"},
       {number:"149", name:"Dragonite"},
-      {number:"150", name:"Mewtwo"},
-      {number:"151", name:"Mew"}
+      {number:"150", name:"Mewtwo", multiplePaths:true, additionalSearchRows:[125]},
+      {number:"151", name:"Mew", multiplePaths:true, additionalSearchRows:[170]},
     ];
 
     function getRandomInt(min, max) {
@@ -180,9 +180,9 @@
     }
     var pokemonIndex = getRandomInt(1, allPokemon.length)-1;
     var pokemon = allPokemon[pokemonIndex];
-    var start = 81;
-    for (var i = start-1; i < start+3; i++) {
-      var pokemon = allPokemon[i];
+    // var start = 148;
+    // for (var i = start-1; i < start+3; i++) {
+    //   var pokemon = allPokemon[i];
       
       imageUrl = "resources/images/pokemon/"+pokemon.number+".png";
       new pngMaskByUrl(imageUrl, {
@@ -200,7 +200,7 @@
         };
       });
 
-    }
+    // }
   
   </script>
 </body>
