@@ -3,8 +3,8 @@
   <style>
   #pokemonContainer .pokemon .png-mask-path {
     cursor: pointer;
-    fill: black;
-    fill-opacity: 0.95;
+    /*fill: black;
+    fill-opacity: 0.95;*/
   }
   #pokemonContainer .pokemon .png-mask-path:hover {
     fill-opacity: 0;
@@ -23,10 +23,10 @@
     var allPokemon = [
       {number:"001", name:"Bulbasaur"},
       {number:"002", name:"Ivysaur"},
-      {number:"003", name:"Venusaur"},
+      {number:"003", name:"Venusaur", multiplePaths:true, searchTolerance:2},
       {number:"004", name:"Charmander"},
-      {number:"005", name:"Charmeleon"},
-      {number:"006", name:"Charizard"},
+      {number:"005", name:"Charmeleon", multiplePaths:true, searchTolerance:8},
+      {number:"006", name:"Charizard", multiplePaths:true},
       {number:"007", name:"Squirtle"},
       {number:"008", name:"Wartortle"},
       {number:"009", name:"Blastoise"},
@@ -36,9 +36,9 @@
       {number:"013", name:"Weedle"},
       {number:"014", name:"Kakuna"},
       {number:"015", name:"Beedrill"},
-      {number:"016", name:"Pidgey"},
-      {number:"017", name:"Pidgeotto"},
-      {number:"018", name:"Pidgeot"},
+      {number:"016", name:"Pidgey", multiplePaths:true, searchTolerance:4},//33 with tiny space
+      {number:"017", name:"Pidgeotto", multiplePaths:true, searchTolerance:2},
+      {number:"018", name:"Pidgeot", multiplePaths:true, searchTolerance:10},
       {number:"019", name:"Rattata"},
       {number:"020", name:"Raticate"},
       {number:"021", name:"Spearow"},
@@ -179,19 +179,25 @@
     }
     var pokemonIndex = getRandomInt(1, allPokemon.length)-1;
     var pokemon = allPokemon[pokemonIndex];
-    // var max = 5;
-    // for (var i = max-5; i < max; i++) {
-    //   var pokemon = allPokemon[i];
+    var start = 16;
+    for (var i = start-1; i < start+0; i++) {
+      var pokemon = allPokemon[i];
       
       imageUrl = "resources/images/pokemon/"+pokemon.number+".png";
-      new pngMaskByImage(imageUrl, {debug:true, mappingTolerance:1, multiplePaths:true, mask:true, elementAttributes:{class:"pokemon"}}).then(function(imageElements){
+      new pngMaskByUrl(imageUrl, {
+        debug:true,
+        mappingTolerance:1,
+        multiplePaths:pokemon.multiplePaths,
+        searchTolerance:pokemon.searchTolerance,
+        mask:true,
+        elementAttributes:{class:"pokemon"}
+      }).then(function(imageElements){
         for (var i in imageElements) {
           $("#pokemonContainer").append(imageElements[i]);
         };
       });
 
-    //   // Things[i]
-    // }
+    }
   
   </script>
 </body>
