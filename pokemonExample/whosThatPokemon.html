@@ -1,6 +1,13 @@
 <html>
 <head>
   <style>
+  #pokemonContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   #pokemonContainer .pokemon .png-mask-path {
     cursor: pointer;
     fill: black;
@@ -16,9 +23,13 @@
     
   </div>
   
-  <!--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-  <script type="text/javascript" src="./../pngMask/src/js/pngmask.min.js"></script> -->
+  <!--
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script type="text/javascript" src="./../pngMask/src/js/pngmask.min.js"></script>
+  <script type="text/javascript" src="./resources/js/pngmask.min.js"></script>
+-->
   <script type="text/javascript" src="./../pngMask/src/js/pngmask.js"></script>
+
   <script>
 
     var allPokemon = [
@@ -179,29 +190,24 @@
       return Math.floor(Math.random() * (max - min + 1) + min);
     }
     var pokemonIndex = getRandomInt(1, allPokemon.length)-1;
+    // pokemonIndex = 124;
     var pokemon = allPokemon[pokemonIndex];
-    // var start = 148;
-    // for (var i = start-1; i < start+3; i++) {
-    //   var pokemon = allPokemon[i];
       
-      imageUrl = "resources/images/pokemon/"+pokemon.number+".png";
-      new pngMaskByUrl(imageUrl, {
-        debug: true,
-        mappingTolerance: 1,
-        multiplePaths: pokemon.multiplePaths,
-        searchTolerance: pokemon.searchTolerance,
-        additionalSearchRows: pokemon.additionalSearchRows,
-        alphaTolerance: pokemon.alphaTolerance,
-        mask: true,
-        elementAttributes: {class:"pokemon"}
-      }).then(function(imageElements){
-        for (var i in imageElements) {
-          document.getElementById("pokemonContainer").appendChild(imageElements[i]);
-        };
-      });
-
-    // }
-  
+    imageUrl = "resources/images/pokemon/"+pokemon.number+".png";
+    new pngMaskByUrl(imageUrl, {
+      debug: true,
+      mappingTolerance: 1,
+      multiplePaths: pokemon.multiplePaths,
+      searchTolerance: pokemon.searchTolerance,
+      additionalSearchRows: pokemon.additionalSearchRows,
+      alphaTolerance: pokemon.alphaTolerance,
+      mask: true,
+      elementAttributes: {class:"pokemon"}
+    }).then(function(imageElements){
+      for (var i in imageElements) {
+        document.getElementById("pokemonContainer").appendChild(imageElements[i]);
+      };
+    });
   </script>
 </body>
 </html>
