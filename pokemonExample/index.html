@@ -1,38 +1,54 @@
 <html>
 <head>
+  <meta charset="UTF-8">
+  <title>Who's that Pokemon</title>
   <style>
-  #pokemonContainer {
-    width: 100%;
-    height: 90%;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-  }
-  #pokemonContainer .pokemon .png-mask-path {
-    cursor: pointer;
-    fill: black;
-    fill-opacity: 0.95;
-  }
-  #pokemonContainer .pokemon .png-mask-path:hover {
-    fill-opacity: 0;
-  }
+    #pokemonContainer {
+      width: 100%;
+      height: 90%;
+    }
+    .flexCenter {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+    }
+    #loadingContainer, #pokemon {
+      width: 475px;
+      height: 475px;
+    }
+    #loadingContainer {
+      display: none;
+    }
+    #pokemon .png-mask-path {
+      cursor: pointer;
+      fill: black;
+      fill-opacity: 0.93;
+    }
+    #pokemon .png-mask-path:hover {
+      fill-opacity: 0;
+    }
+    /* loading */
+    .loading #loadingContainer {
+      display: flex;
+    }
+    .loading #pokemon {
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <div id="pokemonContainer">
-    <button id="nextButton" onclick='loadPokemon()'>Loading...</button>
+  <div id="pokemonContainer" class="flexCenter loading">
+    <div id="loadingContainer" class="flexCenter">
+      <img id="loadingIcon" src="./resources/images/loading-icon.gif">
+    </div>
+    <div id="pokemon"></div>
+    <button id="nextButton" onclick="loadPokemon()">Loading...</button>
   </div>
-  
-  <!--
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-  <script type="text/javascript" src="./../pngMask/src/js/pngmask.min.js"></script>
-  <script type="text/javascript" src="./../pngMask/src/js/pngmask.js"></script>
--->
+
   <script type="text/javascript" src="./resources/js/pngmask.min.js"></script>
 
   <script>
-
     var allPokemon = [
       {number:"001", name:"Bulbasaur"},
       {number:"002", name:"Ivysaur"},
@@ -191,10 +207,15 @@
       return Math.floor(Math.random() * (max - min + 1) + min);
     }
     function loadPokemon() {
-      var pokemonIndex = getRandomInt(1, allPokemon.length)-1;
-      // pokemonIndex = 124;
+      var pokemonContainer = document.getElementById("pokemonContainer");
+      var nextButton = document.getElementById("nextButton");
+      pokemonContainer.classList.add("loading");
+      nextButton.innerHTML = "Loading";
+
+      var pokemonIndex = getRandomInt(1, allPokemon.length) - 1;
+      // pokemonIndex = 124; // for manual testing
       var pokemon = allPokemon[pokemonIndex];
-        
+
       imageUrl = "resources/images/pokemon/"+pokemon.number+".png";
       new pngMaskByUrl(imageUrl, {
         debug: true,
@@ -203,19 +224,16 @@
         searchTolerance: pokemon.searchTolerance,
         additionalSearchRows: pokemon.additionalSearchRows,
         alphaTolerance: pokemon.alphaTolerance,
-        mask: true,
-        elementAttributes: {class:"pokemon"}
+        mask: true
       }).then(function(imageElements){
-        var currentElements = document.getElementsByClassName('pokemon');
-        for (var i = 0; i < currentElements.length; i++) {
-          var element = currentElements[i];
-          element.parentNode.removeChild(element);
-        }
-        var nextButton = document.getElementById("nextButton");
-        nextButton.innerHTML = "NEXT";
+        var pokemonDiv = document.getElementById("pokemon");
+        pokemonDiv.innerHTML = "";
         for (var i in imageElements) {
-          document.getElementById("pokemonContainer").insertBefore(imageElements[i], nextButton);
+          pokemonDiv.appendChild(imageElements[i]);
         }
+
+        nextButton.innerHTML = "NEXT";
+        pokemonContainer.classList.remove("loading");
       });
     }
     loadPokemon();
