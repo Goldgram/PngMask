@@ -21,4 +21,6 @@ I also added support for using it with JQuery because at the time I was interest
 
 Live example: [willbrennan.tech/png-mask/](https://willbrennan.tech/png-mask/)
 
-I created this example page to highlight what the PNG Mask algorithm does. Taking a bit of inspiration from an old pokemon trope. I created a basic page that loads up a Pokemon PNG image, dynamically creates a SVG that gets layered on top of the image. The idea here is to highlight the image only when you hover inside the contours of the SVG. This also works for images that have multiple pieces and inner cavities.
+I created this example page to highlight what the PNG Mask algorithm does. Taking a bit of inspiration from an old pokemon trope ([see here](https://www.youtube.com/watch?v=ntpJrgCQ7E8)). I created a basic page that loads up a Pokemon PNG image, dynamically creates a SVG that gets layered on top of the image. The idea here is to highlight the image only when you hover inside the contours of the SVG. This also works for images that have multiple pieces and inner cavities.
+
+
