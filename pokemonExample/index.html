@@ -1,52 +1,169 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Who's that Pokemon</title>
+  <title>Who's That Pokemon?</title>
+
+  <link rel="shortcut icon" href="resources/images/favicon.ico" type="image/x-icon">
   <style>
-    #pokemonContainer {
-      width: 100%;
-      height: 90%;
+    @font-face {
+      font-family:"PokemonHollow";
+      src: url("resources/font/PokemonHollow.ttf") format("truetype");
+      font-weight: normal;
+      font-style: normal;
     }
+    @font-face {
+      font-family:"PokemonSolid";
+      src: url("resources/font/PokemonSolid.ttf") format("truetype");
+      font-weight: normal;
+      font-style: normal;
+    }
+    body {
+      background-image: url("resources/images/sunburst.svg");
+      /* background by SVGBackgrounds.com */
+      background-color: #ffffff;
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center;
+      font-family: Arial, Helvetica, sans-serif;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+    }
+    /* common */
     .flexCenter {
       display: flex;
       align-items: center;
       flex-direction: column;
-      justify-content: center;
+      justify-content: space-around;
+    }
+    .posRel {
+      position: relative;
+    }
+    .textContainer {
+      width: 100%;
+    }
+    .noSelectClick {
+      cursor: pointer;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    .textSolid, .textHollow {
+      font-weight: bold;
+      text-align: center;
+      width: 100%;
+    }
+    .textSolid {
+      font-family: "PokemonSolid";
+      letter-spacing: 5px;
+      color: #ffcb05;
+    }
+    .textHollow {
+      font-family: "PokemonHollow";
+      letter-spacing: 5px;
+      color: #3566af;
+      font-weight: bold;
+      position: absolute;
+      top:0;
+      left: 0;
+    }
+
+    #pokemonContainer {
+      width: 100%;
+      height: calc(100% - 120px);
+      padding: 60px 0;
+      position: relative;
+    }
+    #title1, #title2, #name1, #name2 {
+      font-size: 50px;
+      line-height: 70px;
+      padding: 5px;
+    }
+    #nameContainer {
+      display: none;
+      position: absolute;
+      bottom: 0;
     }
     #loadingContainer, #pokemon {
       width: 475px;
       height: 475px;
     }
-    #loadingContainer {
+    #loadingContainer, #loadingText{
       display: none;
+    }
+    #loadingText {
+      font-size: 35px;
+      line-height: 50px;
+    }
+    #loadingIcon {
+      -webkit-animation: rotation 2s infinite linear;
+    }
+    @-webkit-keyframes rotation {
+      from {
+        -webkit-transform: rotate(0deg);
+      }
+      to {
+        -webkit-transform: rotate(359deg);
+      }
     }
     #pokemon .png-mask-path {
       cursor: pointer;
-      fill: black;
-      fill-opacity: 0.93;
+      fill: #00375b;
+      fill-opacity: 0.98;
     }
     #pokemon .png-mask-path:hover {
       fill-opacity: 0;
     }
     /* loading */
-    .loading #loadingContainer {
+    .loading #loadingContainer, .loading #loadingText {
       display: flex;
     }
-    .loading #pokemon {
+    .loading #pokemon, .loading #nextButton  {
       display: none;
+    }
+    /* hover */
+    .hover #nameContainer {
+      display: inline;
+    }
+    .hover #titleContainer {
+      visibility: hidden;
     }
   </style>
 </head>
 <body>
   <div id="pokemonContainer" class="flexCenter loading">
-    <div id="loadingContainer" class="flexCenter">
-      <img id="loadingIcon" src="./resources/images/loading-icon.gif">
+    <div class="posRel">
+      <div id="titleContainer" class="textContainer posRel">
+        <div id="title1" class="textSolid">Who's That Pokemon?</div>
+        <div id="title2" class="textHollow">Who's That Pokemon?</div>
+      </div>
+      <div id="nameContainer" class="textContainer posRel">
+        <div id="name1" class="textSolid"></div>
+        <div id="name2" class="textHollow"></div>
+      </div>
     </div>
+
+    <div id="loadingContainer" class="flexCenter">
+      <img id="loadingIcon" src="resources/images/loading.png">
+    </div>
+    <div id="loadingText" class="textContainer posRel">
+      <div class="textSolid">Loading...</div>
+      <div class="textHollow">Loading...</div>
+    </div>
+
     <div id="pokemon"></div>
-    <button id="nextButton" onclick="loadPokemon()">Loading...</button>
+    <img
+      id="nextButton"
+      class="noSelectClick"
+      onclick="loadPokemon()"
+      src="resources/images/next-button.jpg"
+    />
   </div>
 
-  <script type="text/javascript" src="./resources/js/pngmask.min.js"></script>
+  <script type="text/javascript" src="resources/js/pngmask.min.js"></script>
 
   <script>
     var allPokemon = [
@@ -203,20 +320,19 @@
       {number:"151", name:"Mew", multiplePaths:true, additionalSearchRows:[170]},
     ];
 
-    function getRandomInt(min, max) {
+    const getRandomInt = (min, max) => {
       return Math.floor(Math.random() * (max - min + 1) + min);
     }
-    function loadPokemon() {
+
+    const loadPokemon = () => {
       var pokemonContainer = document.getElementById("pokemonContainer");
-      var nextButton = document.getElementById("nextButton");
       pokemonContainer.classList.add("loading");
-      nextButton.innerHTML = "Loading";
 
-      var pokemonIndex = getRandomInt(1, allPokemon.length) - 1;
-      // pokemonIndex = 124; // for manual testing
-      var pokemon = allPokemon[pokemonIndex];
+      const pokemonIndex = getRandomInt(1, allPokemon.length) - 1;
+      // const pokemonIndex = 124; // for manual testing
+      const pokemon = allPokemon[pokemonIndex];
 
-      imageUrl = "resources/images/pokemon/"+pokemon.number+".png";
+      const imageUrl = "resources/images/pokemon/"+pokemon.number+".png";
       new pngMaskByUrl(imageUrl, {
         debug: true,
         mappingTolerance: 1,
@@ -229,14 +345,24 @@
         var pokemonDiv = document.getElementById("pokemon");
         pokemonDiv.innerHTML = "";
         for (var i in imageElements) {
+          var element = imageElements[i];
+          element.addEventListener('mouseover', addName(pokemon.name));
+          element.addEventListener('mouseout', removeName);
           pokemonDiv.appendChild(imageElements[i]);
         }
-
-        nextButton.innerHTML = "NEXT";
         pokemonContainer.classList.remove("loading");
       });
     }
     loadPokemon();
+
+    const addName = (name) => () => {
+      document.getElementById("name1").innerText = name;
+      document.getElementById("name2").innerText = name;
+      document.getElementById("pokemonContainer").classList.add("hover");
+    }
+    const removeName = () => {
+      document.getElementById("pokemonContainer").classList.remove("hover");
+    }
   </script>
 </body>
 </html>
