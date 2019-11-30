@@ -19,22 +19,12 @@ body {
   background-position: center;
   font-family: Arial, Helvetica, sans-serif;
   height: 100%;
+  width: 100%;
   padding: 0;
   margin: 0;
+  min-width: 320px;
 }
 /* common */
-.flexCenter {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: space-around;
-}
-.posRel {
-  position: relative;
-}
-.textContainer {
-  width: 100%;
-}
 .noSelectClick {
   cursor: pointer;
   -webkit-touch-callout: none;
@@ -47,51 +37,35 @@ body {
 .textSolid, .textHollow {
   font-weight: bold;
   text-align: center;
-  width: 100%;
+  width: calc(100% - 30px);
+  padding: 5px 15px;
+  letter-spacing: 5px;
 }
 .textSolid {
   font-family: "PokemonSolid";
-  letter-spacing: 5px;
   color: #ffcb05;
 }
 .textHollow {
   font-family: "PokemonHollow";
-  letter-spacing: 5px;
   color: #3566af;
-  font-weight: bold;
-  position: absolute;
-  top:0;
-  left: 0;
 }
-
+/* specific */
 #pokemonContainer {
   width: 100%;
-  height: calc(100% - 120px);
-  padding: 60px 0;
+  height: 100%;
   position: relative;
 }
-#title1, #title2, #name1, #name2 {
+.title {
   font-size: 50px;
   line-height: 70px;
-  padding: 5px;
-}
-#nameContainer {
-  display: none;
   position: absolute;
-  bottom: 0;
-}
-#loadingContainer, #pokemon {
-  width: 475px;
-  height: 475px;
-}
-#loadingContainer, #loadingText{
-  display: none;
-}
-#loadingText {
-  font-size: 35px;
-  line-height: 50px;
+  bottom: calc(50% + 237px + 30px);
+  left: 0;
 }
 #loadingIcon {
+  position: absolute;
+  top: calc(50% - 50px);
+  left: calc(50% - 50px);
   -webkit-animation: rotation 2s infinite linear;
 }
 @-webkit-keyframes rotation {
@@ -102,6 +76,15 @@ body {
     -webkit-transform: rotate(359deg);
   }
 }
+#pokemon {
+  position: absolute;
+  top: calc(50% - 237px);
+  left: calc(50% - 237px);
+}
+#pokemon svg {
+  width: 475px;
+  height: 475px;
+}
 #pokemon .png-mask-path {
   cursor: pointer;
   fill: #00375b;
@@ -110,17 +93,101 @@ body {
 #pokemon .png-mask-path:hover {
   fill-opacity: 0;
 }
+
+.loadingText {
+  font-size: 35px;
+  line-height: 50px;
+  position: absolute;
+  top: calc(50% + 237px + 40px);
+  left: 0;
+}
+#nextButton {
+  position: absolute;
+  top: calc(50% + 237px + 40px);
+  left: calc(50% - 85px);
+}
+
 /* loading */
-.loading #loadingContainer, .loading #loadingText {
-  display: flex;
+#loadingIcon, .loadingText{
+  display: none;
+}
+.loading #loadingIcon, .loading .loadingText {
+  display: inline;
 }
 .loading #pokemon, .loading #nextButton  {
   display: none;
 }
-/* hover */
-.hover #nameContainer {
-  display: inline;
+
+@media only screen and (max-width: 767px) {
+  .title {
+    bottom: calc(50% + 220px + 20px);
+  }
+  #pokemon {
+    top: calc(50% - 220px);
+    left: calc(50% - 220px);
+  }
+  #pokemon svg {
+    width: 440px;
+    height: 440px;
+  }
+  .loadingText {
+    top: calc(50% + 220px + 40px);
+  }
+  #nextButton {
+    top: calc(50% + 220px + 40px);
+  }
 }
-.hover #titleContainer {
-  visibility: hidden;
+
+@media only screen and (max-width: 599px) {
+  .title {
+    bottom: calc(50% + 200px + 15px);
+  }
+  #pokemon {
+    top: calc(50% - 200px);
+    left: calc(50% - 200px);
+  }
+  #pokemon svg {
+    width: 400px;
+    height: 400px;
+  }
+  .loadingText {
+    top: calc(50% + 200px + 30px);
+  }
+  #nextButton {
+    top: calc(50% + 200px + 30px);
+  }
 }
+
+@media only screen and (max-width: 439px) {
+  .title {
+    bottom: calc(50% + 160px + 10px);
+    font-size: 40px;
+    line-height: 56px;
+  }
+  #pokemon {
+    top: calc(50% - 160px);
+    left: calc(50% - 160px);
+  }
+  #pokemon svg {
+    width: 320px;
+    height: 320px;
+  }
+  .loadingText {
+    top: calc(50% + 160px + 20px);
+  }
+  #nextButton {
+    top: calc(50% + 160px + 20px);
+  }
+}
+/* lock rotation to portrait */
+/* @media screen and (min-width: 320px) and (max-width: 767px) and (orientation: landscape) {
+  html {
+    transform: rotate(-90deg);
+    transform-origin: left top;
+    width: 100vh;
+    overflow-x: hidden;
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
+} */

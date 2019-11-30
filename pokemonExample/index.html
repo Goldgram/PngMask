@@ -1,33 +1,25 @@
 <html>
 <head>
-  <meta charset="UTF-8">
   <title>Who's That Pokemon?</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="apple-mobile-web-app-capable" content="yes">
 
   <link rel="shortcut icon" href="resources/images/favicon.ico" type="image/x-icon">
+
+  <link rel="stylesheet" href="resources/css/normalize.css">
   <link rel="stylesheet" href="resources/css/index.css">
 </head>
 <body>
-  <div id="pokemonContainer" class="flexCenter loading">
-    <div class="posRel">
-      <div id="titleContainer" class="textContainer posRel">
-        <div id="title1" class="textSolid">Who's That Pokemon?</div>
-        <div id="title2" class="textHollow">Who's That Pokemon?</div>
-      </div>
-      <div id="nameContainer" class="textContainer posRel">
-        <div id="name1" class="textSolid"></div>
-        <div id="name2" class="textHollow"></div>
-      </div>
-    </div>
+  <div id="pokemonContainer" class="loading">
+    <div class="title textSolid">Who's That Pokemon?</div>
+    <div class="title textHollow">Who's That Pokemon?</div>
 
-    <div id="loadingContainer" class="flexCenter">
-      <img id="loadingIcon" src="resources/images/loading.png">
-    </div>
-    <div id="loadingText" class="textContainer posRel">
-      <div class="textSolid">Loading...</div>
-      <div class="textHollow">Loading...</div>
-    </div>
-
+    <img id="loadingIcon" src="resources/images/loading.png">
     <div id="pokemon"></div>
+
+    <div class="loadingText textSolid">Loading...</div>
+    <div class="loadingText textHollow">Loading...</div>
     <img
       id="nextButton"
       class="noSelectClick"

@@ -1,16 +1,14 @@
+const defaultTitle = "Who's That Pokemon?";
 
 const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-const addName = (name) => () => {
-  document.getElementById("name1").innerText = name;
-  document.getElementById("name2").innerText = name;
-  document.getElementById("pokemonContainer").classList.add("hover");
-}
-
-const removeName = () => {
-  document.getElementById("pokemonContainer").classList.remove("hover");
+const changeTitle = (name) => () => {
+  var classes = document.getElementsByClassName("title");
+  for (var i in classes) {
+    classes[i].innerText = name;
+  }
 }
 
 const loadPokemon = () => {
@@ -18,12 +16,12 @@ const loadPokemon = () => {
   pokemonContainer.classList.add("loading");
 
   const pokemonIndex = getRandomInt(1, allPokemon.length) - 1;
-  // const pokemonIndex = 124; // for manual testing
+  // const pokemonIndex = 5; // for manual testing
   const pokemon = allPokemon[pokemonIndex];
 
   const imageUrl = "resources/images/pokemon/"+pokemon.number+".png";
   new pngMaskByUrl(imageUrl, {
-    debug: true,
+    // debug: true,
     mappingTolerance: 1,
     multiplePaths: pokemon.multiplePaths,
     searchTolerance: pokemon.searchTolerance,
@@ -35,8 +33,8 @@ const loadPokemon = () => {
     pokemonDiv.innerHTML = "";
     for (var i in imageElements) {
       var element = imageElements[i];
-      element.addEventListener('mouseover', addName(pokemon.name));
-      element.addEventListener('mouseout', removeName);
+      element.addEventListener('mouseover', changeTitle(pokemon.name));
+      element.addEventListener('mouseout', changeTitle(defaultTitle));
       pokemonDiv.appendChild(imageElements[i]);
     }
     pokemonContainer.classList.remove("loading");
