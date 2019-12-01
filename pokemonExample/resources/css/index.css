@@ -100,12 +100,12 @@ body {
   font-size: 35px;
   line-height: 50px;
   position: absolute;
-  top: 80vh;
+  top: 81vh;
   left: 0;
 }
 #nextButton {
   position: absolute;
-  top: 80vh;
+  top: 81vh;
   left: calc(50% - 85px);
 }
 
@@ -120,10 +120,25 @@ body {
   display: none;
 }
 
-/* @media only screen and (max-height: 479px) {
+/* width or height */
+@media only screen and (max-width: 767px), only screen and (max-height: 767px) {
   .title {
     font-size: 40px;
     line-height: 56px;
+  }
+}
+@media only screen and (max-width: 599px), only screen and (max-height: 599px) {
+  .title {
+    font-size: 35px;
+    line-height: 50px;
+  }
+  #pokemon {
+    padding: 0 10px;
+    width: calc(100% - 20px);
+  }
+  .loadingText {
+    font-size: 28px;
+    line-height: 38px;
   }
   #nextButton {
     height: 40px;
@@ -131,30 +146,47 @@ body {
     left: calc(50% - 68px);
   }
 }
-
-@media only screen and (max-width: 479px) {
+@media only screen and (max-width: 479px), only screen and (max-height: 479px) {
   .title {
-    font-size: 40px;
-    line-height: 56px;
-  }
-} */
-
-/* @media only screen and (max-height: 499px) and (max-width: 667px) { */
-  /* .title, .loadingText {
     font-size: 30px;
-    line-height: 42px;
-    bottom: 75vh;
-  } */
-/* } */
-/* lock rotation to portrait ??? */
-/* @media screen and (min-width: 320px) and (max-width: 767px) and (orientation: landscape) {
-  html {
-    transform: rotate(-90deg);
-    transform-origin: left top;
-    width: 100vh;
-    overflow-x: hidden;
-    position: absolute;
-    top: 100%;
-    left: 0;
+    line-height: 38px;
   }
-} */
+  .loadingText {
+    font-size: 26px;
+    line-height: 32px;
+  }
+  #nextButton {
+    height: 38px;
+    width: 130px;
+    left: calc(50% - 65px);
+  }
+}
+
+/* height only */
+@media only screen and (max-height: 767px) {
+  .title {
+    bottom: 79vh;
+  }
+}
+@media only screen and (max-height: 599px) {
+  .title {
+    bottom: 75vh;
+  }
+  #pokemon {
+    top: 26vh;
+  }
+  .loadingText, #nextButton {
+    top: 81vh;
+  }
+}
+@media only screen and (max-height: 479px) {
+  .title {
+    bottom: 71vh;
+  }
+  #pokemon {
+    top: 29vh;
+  }
+  .loadingText, #nextButton {
+    top: 83vh;
+  }
+}
