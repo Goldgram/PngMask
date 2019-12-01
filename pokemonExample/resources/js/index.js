@@ -41,4 +41,5 @@ const loadPokemon = () => {
   });
 }
 
+// initial load
 loadPokemon();
